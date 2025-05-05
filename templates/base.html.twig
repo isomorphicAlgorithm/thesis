@@ -1,16 +1,49 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Bandito{% endblock %}</title>
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    {{ encore_entry_link_tags('styles') }}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-white">
+
+    <div x-data="themeSwitcher()" x-init="$watch('isDark', value => document.documentElement.classList.toggle('dark', value))">
+        <header class="shadow bg-white dark:bg-gray-800 flex items-center justify-between px-4 py-2">
+            <div class="flex items-center space-x-4">
+                <img src="{{ asset('images/bandito.logo.png') }}" alt="Bandito Logo" class="w-32 p-2 bg-white dark:bg-yellow-500 rounded" />
+                <span class="text-2xl font-bold">BANDITO</span>
+            </div>
+            <button @click="toggleTheme" class="transition-colors duration-300">
+                <span x-text="isDark ? '🌙 Dark' : '🌞 Light'"></span>
+            </button>
+        </header>
+
+        <main class="flex-grow container mx-auto p-6">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="p-4 mb-4 rounded text-sm font-medium
+                        {% if label == 'success' %}
+                            bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
+                        {% elseif label == 'error' %}
+                            bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
+                        {% endif %}
+                    ">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="bg-gray-800 text-white text-center p-4">
+            <p>© 2025 Bandito. All rights reserved.</p>
+        </footer>
+    </div>
+
+    {{ encore_entry_script_tags('app') }}
+</body>
 </html>

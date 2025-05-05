@@ -1,23 +1,102 @@
+{# templates/registration/register.html.twig #}
+{#
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
-
 {% block body %}
+<div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+  <header class="w-full bg-white shadow mb-10">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="{{ asset('images/bandito-logo.png') }}" alt="Bandito Logo" class="h-10 w-10">
+        <span class="text-xl font-bold text-gray-800">Bandito</span>
+      </div>
+    </div>
+  </header>
+
     {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+      <div class="mb-4 p-3 rounded bg-red-100 text-red-700">
+        {{ flash_error }}
+      </div>
     {% endfor %}
 
-    <h1>Register</h1>
-
-    {{ form_errors(registrationForm) }}
+  <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md transition-transform transform hover:scale-105">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Create an Account</h2>
 
     {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword.first)}}
-        {{ form_row(registrationForm.plainPassword.second)}}
-        {{ form_row(registrationForm.agreeTerms) }}
 
-        <button type="submit" class="btn">Register</button>
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Username</label>
+        <div class="relative">
+          <span class="absolute left-3 top-2.5 text-gray-400">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M5.121 17.804A9 9 0 1119 5a9 9 0 01-13.879 12.804z"/>
+            </svg>
+          </span>
+          {{ form_widget(registrationForm.username, { attr: { class: 'pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-300' } }) }}
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Email</label>
+        <div class="relative">
+          <span class="absolute left-3 top-2.5 text-gray-400">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M16 12H8m0 0l-4-4m4 4l-4 4" />
+            </svg>
+          </span>
+          {{ form_widget(registrationForm.email, { attr: { class: 'pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-300' } }) }}
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Password</label>
+        <div class="relative">
+          <span class="absolute left-3 top-2.5 text-gray-400">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M12 11c0-1.104.896-2 2-2h4a2 2 0 012 2v5h-8v-5z" />
+            </svg>
+          </span>
+          {{ form_widget(registrationForm.plainPassword.first, { attr: { class: 'pl-10 w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-300' } }) }}
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Repeat Password</label>
+        {{ form_widget(registrationForm.plainPassword.second, { attr: { class: 'w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-300' } }) }}
+      </div>
+
+      <div class="mb-4 flex items-center gap-2">
+        {{ form_widget(registrationForm.agreeTerms) }}
+        <label class="text-sm text-gray-600">I agree to the terms and conditions</label>
+      </div>
+
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-200">Register</button>
+
     {{ form_end(registrationForm) }}
+  </div>
+</div>
+{% endblock %}
+#}
+{% extends 'base.html.twig' %}
+
+{% block title %}Register - Bandito{% endblock %}
+
+{% block body %}
+<div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold text-center mb-6">Create Your Bandito Account</h1>
+
+    {{ form_start(registrationForm) }}
+        <div class="space-y-4">
+            {{ form_row(registrationForm.username, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
+            {{ form_row(registrationForm.email, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
+            {{ form_row(registrationForm.plainPassword.first, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
+            {{ form_row(registrationForm.plainPassword.second, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
+            {{ form_row(registrationForm.agreeTerms) }}
+        </div>
+
+        <button type="submit" class="mt-6 w-full bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded transition hover:scale-105">
+            Register
+        </button>
+    {{ form_end(registrationForm) }}
+</div>
 {% endblock %}

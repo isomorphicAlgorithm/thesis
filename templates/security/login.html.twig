@@ -1,29 +1,43 @@
+{# templates/security/login.html.twig #}
+{#
 {% extends 'base.html.twig' %}
 
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <form method="post">
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+  <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+    {% if app.user %}
+      <p class="text-sm text-gray-700 mb-4">
+        You are logged in as {{ app.user.userIdentifier }},
+        <a href="{{ path('app_logout') }}" class="text-blue-600 hover:underline">Logout</a>
+      </p>
+    {% endif %}
 
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        <div class="mb-4 p-3 rounded bg-{{ label == 'error' ? 'red' : 'green' }}-100 text-{{ label == 'error' ? 'red' : 'green' }}-700">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endfor %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Password</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+    <h2 class="text-2xl font-bold text-center mb-6">Sign In</h2>
+
+    <form method="post" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium">Email</label>
+        <input type="email" name="_username" id="username" value="{{ last_username }}" autocomplete="email"
+               class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300 focus:outline-none p-2" required autofocus>
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium">Password</label>
+        <input type="password" name="_password" id="password" autocomplete="current-password"
+               class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300 focus:outline-none p-2" required>
+      </div>
+
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
         {#
             Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
@@ -34,13 +48,81 @@
                 <label for="_remember_me">Remember me</label>
             </div>
         #}
+{#
+      <button type="submit"
+              class="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        Sign in
+      </button>
 
-        <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
-        </button>
-
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+      {% if error %}
+        <p class="text-red-600 text-sm mt-4">
+          {{ error.messageKey|trans(error.messageData, 'security') }}
+        </p>
+      {% endif %}
     </form>
+  </div>
+</div>
+{% endblock %}
+#}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
+    <div class="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 transition-transform duration-300 hover:scale-105">
+        <div class="flex justify-between items-center mb-6">
+            <img src="{{ asset('images/bandito_logo.png') }}" alt="Bandito Logo" class="h-10">
+            {#<button id="toggleDark" class="text-gray-600 dark:text-gray-300">🌙</button>#}
+        </div>
+
+        <h2 class="text-2xl font-semibold text-center text-gray-800 dark:text-white">Sign In to Bandito</h2>
+
+        {% for message in app.flashes('success') %}
+            <div class="mt-4 bg-green-100 text-green-800 dark:bg-green-700 dark:text-white text-sm rounded-md p-2">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="mt-4 bg-red-100 text-red-800 dark:bg-red-700 dark:text-white text-sm rounded-md p-2">{{ message }}</div>
+        {% endfor %}
+
+        {{ form_start(loginForm) }}
+
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <div class="relative">
+                <span class="absolute left-3 top-2.5 text-gray-400 dark:text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" />
+                    </svg>
+                </span>
+                {{ form_widget(loginForm.email, {'attr': {
+                    'class': 'pl-10 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
+                }}) }}
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+            <div class="relative">
+                <span class="absolute left-3 top-2.5 text-gray-400 dark:text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                    </svg>
+                </span>
+                {{ form_widget(loginForm.password, {'attr': {
+                    'class': 'pl-10 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
+                }}) }}
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md shadow-md transition transform hover:scale-105">
+                Sign In
+            </button>
+        </div>
+        {{ form_end(loginForm) }}
+
+        <p class="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+            Don't have an account? <a href="{{ path('app_register') }}" class="text-yellow-600 hover:underline">Register here</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

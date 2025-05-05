@@ -1,0 +1,26 @@
+/*
+ * Welcome to your app's main JavaScript file!
+ *
+ * We recommend including the built version of this JavaScript file
+ * (and its CSS file) in your base layout (base.html.twig).
+ */
+
+// any CSS you import will output into a single css file (app.css in this case)
+//import './styles/app.css';
+
+/*import Alpine from 'alpinejs'
+import { themeSwitcher } from './js/theme'
+
+window.themeSwitcher = themeSwitcher;
+window.Alpine = Alpine
+
+Alpine.data('themeSwitcher', themeSwitcher)
+
+Alpine.start()*/
+import Alpine from 'alpinejs'
+import themeSwitcher from './js/theme'
+
+window.Alpine = Alpine
+window.themeSwitcher = themeSwitcher // 👈 This makes it usable in x-data="themeSwitcher()"
+
+Alpine.start()
