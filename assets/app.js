@@ -7,7 +7,7 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 //import './styles/app.css';
-
+//import 'alpinejs';
 /*import Alpine from 'alpinejs'
 import { themeSwitcher } from './js/theme'
 
@@ -17,10 +17,22 @@ window.Alpine = Alpine
 Alpine.data('themeSwitcher', themeSwitcher)
 
 Alpine.start()*/
-import Alpine from 'alpinejs'
-import themeSwitcher from './js/theme'
+//import Alpine from 'alpinejs'
+//import themeSwitcher from './js/theme'
 
-window.Alpine = Alpine
-window.themeSwitcher = themeSwitcher // 👈 This makes it usable in x-data="themeSwitcher()"
+//window.Alpine = Alpine
+//window.themeSwitcher = themeSwitcher // 👈 This makes it usable in x-data="themeSwitcher()"
 
-Alpine.start()
+//Alpine.start()
+
+import './styles/app.css';
+
+// Alpine.js core
+import Alpine from 'alpinejs';
+import themeSwitcher from './js/theme';
+
+window.Alpine = Alpine;
+Alpine.data('themeSwitcher', themeSwitcher);
+
+// Important: start Alpine
+Alpine.start();

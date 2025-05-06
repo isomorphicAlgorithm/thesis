@@ -79,24 +79,70 @@
 #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Register - Bandito{% endblock %}
-
 {% block body %}
-<div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-    <h1 class="text-2xl font-semibold text-center mb-6">Create Your Bandito Account</h1>
-
-    {{ form_start(registrationForm) }}
-        <div class="space-y-4">
-            {{ form_row(registrationForm.username, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
-            {{ form_row(registrationForm.email, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
-            {{ form_row(registrationForm.plainPassword.first, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
-            {{ form_row(registrationForm.plainPassword.second, {'attr': {'class': 'w-full px-4 py-2 rounded border dark:bg-gray-700'}}) }}
-            {{ form_row(registrationForm.agreeTerms) }}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
+    <div class="w-full max-w-md p-6 bg-gray-800 text-white rounded-xl shadow-xl border border-yellow-500 transition-transform duration-300 hover:scale-105">
+        <div class="flex justify-between items-center mb-6">
+            <img src="{{ asset('images/bandito_logo.png') }}" alt="Bandito Logo" class="h-10">
         </div>
 
-        <button type="submit" class="mt-6 w-full bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded transition hover:scale-105">
-            Register
-        </button>
-    {{ form_end(registrationForm) }}
+        <h2 class="text-2xl font-semibold text-center text-white">Register for Bandito</h2>
+
+        {% for message in app.flashes('success') %}
+            <div class="mt-4 bg-green-100 text-green-800 text-sm rounded-md p-2">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="mt-4 bg-red-100 text-red-800 text-sm rounded-md p-2">{{ message }}</div>
+        {% endfor %}
+
+        {{ form_start(registrationForm) }}
+
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-200 mb-1">Username</label>
+            {{ form_widget(registrationForm.username, {
+                attr: {
+                    class: 'w-full p-2 pl-3 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
+                }
+            }) }}
+        </div>
+
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-200 mb-1">Email</label>
+            {{ form_widget(registrationForm.email, {
+                attr: {
+                    class: 'w-full p-2 pl-3 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
+                }
+            }) }}
+        </div>
+
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-200 mb-1">Password</label>
+            {{ form_widget(registrationForm.plainPassword.first, {
+                attr: {
+                    class: 'w-full p-2 pl-3 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
+                }
+            }) }}
+        </div>
+
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-200 mb-1">Repeat Password</label>
+            {{ form_widget(registrationForm.plainPassword.second, {
+                attr: {
+                    class: 'w-full p-2 pl-3 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
+                }
+            }) }}
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 rounded-md shadow-md transition transform hover:scale-105">
+                Register
+            </button>
+        </div>
+        {{ form_end(registrationForm) }}
+
+        <p class="mt-4 text-center text-sm text-gray-300">
+            Already have an account? <a href="{{ path('app_login') }}" class="text-yellow-400 hover:underline">Log in here</a>
+        </p>
+    </div>
 </div>
 {% endblock %}

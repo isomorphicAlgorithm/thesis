@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <title>{% block title %}Bandito{% endblock %}</title>
 
-    {{ encore_entry_link_tags('styles') }}
+    {{ encore_entry_link_tags('app') }}
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-white">
+<body class="text-gray-800">
 
-    <div x-data="themeSwitcher()" x-init="$watch('isDark', value => document.documentElement.classList.toggle('dark', value))">
-        <header class="shadow bg-white dark:bg-gray-800 flex items-center justify-between px-4 py-2">
+    <div x-data="themeSwitcher()">
+        <!-- Static header -->
+        <header class="bg-gray-800 text-white flex items-center justify-between px-4 py-2 shadow">
             <div class="flex items-center space-x-4">
-                <img src="{{ asset('images/bandito.logo.png') }}" alt="Bandito Logo" class="w-32 p-2 bg-white dark:bg-yellow-500 rounded" />
+                <div class="bg-yellow-400 p-1 rounded max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
+                    <img src="https://i.imgur.com/QG1OKhO.png" alt="Bandito Logo"
+                        class="h-10 w-auto max-w-[150px] object-contain drop-shadow-xl"/>
+                </div>
                 <span class="text-2xl font-bold">BANDITO</span>
             </div>
             <button @click="toggleTheme" class="transition-colors duration-300">
@@ -21,7 +25,11 @@
             </button>
         </header>
 
-        <main class="grow container mx-auto p-6">
+        <!-- Theme toggle applies only here -->
+        <main
+            x-bind:class="isDark ? 'dark' : ''"
+            class="transition-colors duration-500 ease-in-out grow min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white"
+        >
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
                     <div class="p-4 mb-4 rounded text-sm font-medium
@@ -39,6 +47,7 @@
             {% block body %}{% endblock %}
         </main>
 
+        <!-- Static footer -->
         <footer class="bg-gray-800 text-white text-center p-4">
             <p>© 2025 Bandito. All rights reserved.</p>
         </footer>
@@ -46,4 +55,4 @@
 
     {{ encore_entry_script_tags('app') }}
 </body>
-</html>
+</html
