@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% if app.user %}
+    <h1>Welcome back, {{ app.user.userIdentifier }}</h1>
+    <p>Your roles: {{ app.user.roles|join(', ') }}</p>
+{% else %}
+    <h1>Welcome, visitor!</h1>
+    <p>Please <a href="{{ path('app_login') }}">log in</a> to access more features.</p>
+{% endif %}
+{% endblock %}

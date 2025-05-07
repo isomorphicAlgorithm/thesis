@@ -3,3 +3,11 @@ main {
     transition: background-color 0.5s ease, color 0.5s ease;
   }
 @custom-variant dark (&:where(.dark, .dark *));
+ul.form-errors {
+  @apply text-red-400 text-sm mt-1 list-none;
+}
+@layer utilities {
+  [x-cloak] {
+      display: none !important;
+  }
+}

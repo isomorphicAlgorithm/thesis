@@ -30,9 +30,11 @@ import './styles/app.css';
 // Alpine.js core
 import Alpine from 'alpinejs';
 import themeSwitcher from './js/theme';
+import loginForm from './js/login_form';
 
 window.Alpine = Alpine;
 Alpine.data('themeSwitcher', themeSwitcher);
+Alpine.data('loginForm', loginForm);
 
 // Important: start Alpine
 Alpine.start();

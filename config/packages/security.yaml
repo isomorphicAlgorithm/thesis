@@ -18,19 +18,30 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\LoginFormAuthenticator
+            entry_point: App\Security\LoginFormAuthenticator
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 1 week in seconds
+                path: /
+                name: REMEMBERME
+                always_remember_me: false
+
             logout:
                 path: app_logout
-            entry_point: App\Security\LoginFormAuthenticator
-            form_login:
-                login_path: app_login
-                check_path: app_login
 
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/dashboard, roles: PUBLIC_ACCESS }
+        - { path: ^/musician, roles: PUBLIC_ACCESS }
+        - { path: ^/band, roles: PUBLIC_ACCESS }
+        - { path: ^/song, roles: PUBLIC_ACCESS }
+        - { path: ^/album, roles: PUBLIC_ACCESS }
+        - { path: ^/event, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
+        #- { path: ^/test, roles: ROLE_USER }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

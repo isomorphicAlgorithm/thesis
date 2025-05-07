@@ -21,6 +21,7 @@
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
         "symfony/security-core": "7.2.*",
+        "symfony/security-csrf": "7.2.*",
         "symfony/twig-bundle": "7.2.*",
         "symfony/validator": "7.2.*",
         "symfony/webpack-encore-bundle": "^2.2",
@@ -30,7 +31,9 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.1",
         "symfony/debug-bundle": "7.2.*",
-        "symfony/maker-bundle": "^1.63"
+        "symfony/maker-bundle": "^1.63",
+        "symfony/stopwatch": "7.2.*",
+        "symfony/web-profiler-bundle": "7.2.*"
     },
     "config": {
         "allow-plugins": {

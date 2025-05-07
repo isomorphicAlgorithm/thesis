@@ -10,24 +10,14 @@
 </head>
 <body class="text-gray-800">
 
-    <div x-data="themeSwitcher()">
-        <!-- Static header -->
-        <header class="bg-gray-800 text-white flex items-center justify-between px-4 py-2 shadow">
-            <div class="flex items-center space-x-4">
-                <div class="bg-yellow-400 p-1 rounded max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
-                    <img src="https://i.imgur.com/QG1OKhO.png" alt="Bandito Logo"
-                        class="h-10 w-auto max-w-[150px] object-contain drop-shadow-xl"/>
-                </div>
-                <span class="text-2xl font-bold">BANDITO</span>
-            </div>
-            <button @click="toggleTheme" class="transition-colors duration-300">
-                <span x-text="isDark ? '🌙 Dark' : '🌞 Light'"></span>
-            </button>
-        </header>
+    <div x-cloak x-data="themeSwitcher()">
+
+        {% include 'partials/header.html.twig' %}
 
         <!-- Theme toggle applies only here -->
         <main
             x-bind:class="isDark ? 'dark' : ''"
+            x-cloak
             class="transition-colors duration-500 ease-in-out grow min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white"
         >
             {% for label, messages in app.flashes %}

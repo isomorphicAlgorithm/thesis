@@ -1,85 +1,17 @@
-{#    <form method="post" class="space-y-4">
-      <div>
-        <label for="username" class="block text-sm font-medium">Email</label>
-        <input type="email" name="_username" id="username" value="{{ last_username }}" autocomplete="email"
-               class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300 focus:outline-none p-2" required autofocus>
-      </div>
-
-      <div>
-        <label for="password" class="block text-sm font-medium">Password</label>
-        <input type="password" name="_password" id="password" autocomplete="current-password"
-               class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300 focus:outline-none p-2" required>
-      </div>
-
-      <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
-
-            <div class="checkbox mb-3">
-                <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
-            </div>
-        #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
 <div class="min-h-screen flex items-center justify-center transition-colors duration-500 bg-white dark:bg-gray-900">
     <div class="w-full max-w-md p-6 bg-gray-800 text-white rounded-xl shadow-xl border border-gray-700 transition-transform duration-300 hover:scale-105">
         <div class="flex justify-between items-center mb-6">
-            <img src="https://i.imgur.com/QG1OKhO.png"{#src="{{ asset('images/bandito_logo.png') }}"#} alt="Bandito Logo" class="h-10">
+            <img src="https://i.imgur.com/QG1OKhO.png" alt="Bandito Logo" class="h-10">
         </div>
 
         <h2 class="text-2xl font-semibold text-center">Sign In to Bandito</h2>
 
-        {% for message in app.flashes('success') %}
-            <div class="mt-4 bg-green-700 text-white text-sm rounded-md p-2">{{ message }}</div>
-        {% endfor %}
-        {% for message in app.flashes('error') %}
-            <div class="mt-4 bg-red-700 text-white text-sm rounded-md p-2">{{ message }}</div>
-        {% endfor %}
-
-        {{ form_start(loginForm) }}
-
-        <div class="mt-6">
-            <label class="block text-sm font-medium text-white mb-1">Email</label>
-            <div class="relative">
-                <span class="absolute left-3 top-2.5 text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" />
-                    </svg>
-                </span>
-                {{ form_widget(loginForm.email, {'attr': {
-                    'class': 'pl-10 w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
-                }}) }}
-            </div>
-        </div>
-
-        <div class="mt-4">
-            <label class="block text-sm font-medium text-white mb-1">Password</label>
-            <div class="relative">
-                <span class="absolute left-3 top-2.5 text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                    </svg>
-                </span>
-                {{ form_widget(loginForm.password, {'attr': {
-                    'class': 'pl-10 w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'
-                }}) }}
-            </div>
-        </div>
-
-        <div class="mt-6">
-            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md shadow-md transition transform hover:scale-105">
-                Sign In
-            </button>
-        </div>
-        {{ form_end(loginForm) }}
-
-        <p class="mt-4 text-center text-sm text-gray-300">
-            Don't have an account? <a href="{{ path('app_register') }}" class="text-yellow-400 hover:underline">Register here</a>
-        </p>
+        {#<div x-data="loginForm()" x-cloak>#}
+        {% include 'security/login_inner.html.twig' %}
+        {#</div>#}
     </div>
 </div>
 {% endblock %}
