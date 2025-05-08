@@ -11,33 +11,40 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use App\Form\LoginForm;
+use App\Form\ResendVerification;
+use App\Security\EmailVerifier;
 use App\Security\LoginFormAuthenticator;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class LoginController extends AbstractController
 {
     #[Route(path: '/login', name: 'app_login')]
-    public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $loginFormAuthenticator): Response
+    public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $loginFormAuthenticator, EmailVerifier $emailVerifier): Response
     {
         $form = $this->createForm(LoginForm::class);
+        $resendVerificationForm = $this->createForm(ResendVerification::class);
 
         $form->handleRequest($request);
-/*
-        if ($form->isSubmitted() && !$form->isValid()) {
-            if ($request->isXmlHttpRequest()) {
-                return new Response($this->renderView('security/login_inner.html.twig', [
-                    'loginForm' => $form,
-                ]), Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-        }
-*/
+        $resendVerificationForm->handleRequest($request);
+
+        $showResendLink = false;
+
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $form->get('email')->getData();
             $password = $form->get('password')->getData();
 
             $user = $userRepository->findOneBy(['email' => $email]);
 
-            if (!$user || !$passwordHasher->isPasswordValid($user, $password)) {
-                $form->addError(new FormError('Invalid email or password'));
+            if (!$user) {
+                $form->addError(new FormError('No account with this email has been found'));
+            } else if ($user && !$passwordHasher->isPasswordValid($user, $password)) {
+                $form->addError(new FormError('Invalid password'));
+            } else if ($user && !$user->isVerified()) {
+                $showResendLink = true;
+
+                $request->getSession()->set('unverified_email', $email);
+
+                $form->addError(new FormError('Please verify your email before logging in'));
             } else {
                 return $userAuthenticator->authenticateUser(
                     $user,
@@ -47,8 +54,46 @@ class LoginController extends AbstractController
             }
         }
 
+        // Handle resendVerificationForm separately
+        if ($resendVerificationForm->isSubmitted() && $resendVerificationForm->isValid()) {
+            $session = $request->getSession();
+            $unverifiedEmail = $session->get('unverified_email');
+
+            if ($unverifiedEmail) {
+                $user = $userRepository->findOneBy(['email' => $unverifiedEmail]);
+
+                if ($user && !$user->isVerified()) {
+                    $emailVerifier->sendEmailConfirmation(
+                        'app_verify_email',
+                        $user,
+                        (new TemplatedEmail())
+                            ->from('banditosecure@gmail.com')
+                            ->to($unverifiedEmail)
+                            ->subject('Please Confirm your Email')
+                            ->htmlTemplate('registration/confirmation_email.html.twig')
+                    );
+
+                    $this->addFlash('success', 'Verification email resent.');
+                }
+
+                $session->remove('unverified_email');
+
+                return $this->redirectToRoute('app_login');
+            }
+        }
+        /*
+        if ($form->isSubmitted() && !$form->isValid()) {
+            if ($request->isXmlHttpRequest()) {
+                return new Response($this->renderView('security/login_inner.html.twig', [
+                    'loginForm' => $form,
+                ]), Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+        }
+*/
         return $this->render('security/login.html.twig', [
             'loginForm' => $form->createView(),
+            'resendVerificationForm' => $resendVerificationForm->createView(),
+            'showResendLink' => $showResendLink
         ]);
         /*
         // For normal (non-AJAX) or valid submission, render full template

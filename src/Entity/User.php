@@ -35,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     #[Assert\NotBlank]
-    #[ORM\Column(length: 32, unique: true)]
+    #[ORM\Column(length: 32)]
     #[Assert\NotBlank(message: 'Username cannot be blank')]
     #[Assert\Length(min: 4, max: 32)]
     private ?string $username = null;

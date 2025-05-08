@@ -7,24 +7,27 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use App\Repository\UserRepository;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use App\Exception\VerifyEmailException;
 
 class EmailVerifier
 {
     public function __construct(
+        private UserRepository $userRepository,
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private MailerInterface $mailer,
         private EntityManagerInterface $entityManager
-    ) {
-    }
+    ) {}
 
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             $verifyEmailRouteName,
             (string) $user->getId(),
-            (string) $user->getEmail()
+            (string) $user->getEmail(),
+            ['id' => $user->getId()]
         );
 
         $context = $email->getContext();
@@ -37,16 +40,40 @@ class EmailVerifier
         $this->mailer->send($email);
     }
 
-    /**
-     * @throws VerifyEmailExceptionInterface
-     */
-    public function handleEmailConfirmation(Request $request, User $user): void
+    /*
+     public function handleEmailConfirmation(Request $request, User $user): void
     {
         $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
 
         $user->setIsVerified(true);
 
         $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+    */
+    /**
+     * @throws VerifyEmailException
+     */
+    public function handleEmailConfirmation(Request $request, int $id): void
+    {
+        $user = $this->userRepository->find($id);
+
+        if (!$user) {
+            throw new VerifyEmailException('User not found.');
+        }
+
+        try {
+            $this->verifyEmailHelper->validateEmailConfirmationFromRequest(
+                $request,
+                (string)$user->getId(),
+                (string)$user->getEmail()
+            );
+        } catch (VerifyEmailExceptionInterface $e) {
+            throw new VerifyEmailException('Token error: ' . $e->getReason());
+        }
+
+        $user->setIsVerified(true);
+
         $this->entityManager->flush();
     }
 }

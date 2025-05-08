@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -19,21 +20,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    private CsrfTokenManagerInterface $csrfTokenManager;
-    private UrlGeneratorInterface $urlGenerator;
-    private RememberMeHandlerInterface $rememberMeHandler;
-
-    public function __construct(CsrfTokenManagerInterface $csrfTokenManager, UrlGeneratorInterface $urlGenerator, RememberMeHandlerInterface $rememberMeHandler)
-    {
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->rememberMeHandler = $rememberMeHandler;
-    }
+    public function __construct(
+        private CsrfTokenManagerInterface $csrfTokenManager,
+        private UrlGeneratorInterface $urlGenerator,
+        private RememberMeHandlerInterface $rememberMeHandler,
+        private UserRepository $userRepository
+    ) {}
 
     public function supports(Request $request): bool
     {
@@ -51,7 +49,19 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         return new Passport(
-            new UserBadge($email),
+            new UserBadge($email, function ($userIdentifier) {
+                $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
+
+                if (!$user) {
+                    throw new CustomUserMessageAuthenticationException('Email could not be found.');
+                }
+
+                if (!$user->isVerified()) {
+                    throw new CustomUserMessageAuthenticationException('Please verify your email before logging in.');
+                }
+
+                return $user;
+            }),
             new PasswordCredentials($password),
             [
                 new CsrfTokenBadge('login_form', $csrfToken),
@@ -62,16 +72,21 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if ($target = $this->getTargetPath($request->getSession(), $firewallName)) {
+        $target = $this->getTargetPath($request->getSession(), $firewallName);
+
+        // Redirect to target path if it exists and is not the email verification route
+        if ($target && $target !== '/verify/email') {
             return new RedirectResponse($target);
         }
 
+        // Default redirect
         $response = new RedirectResponse($this->urlGenerator->generate('homepage'));
 
-        if (isset($request->request->all('login_form')['remember_me'])) {
+        // Handle remember me cookie
+        if (isset($request->request->all()['login_form']['remember_me'])) {
             $this->rememberMeHandler->createRememberMeCookie($token->getUser(), $request, $response);
         }
-        //redirect after login
+
         return $response;
     }
 

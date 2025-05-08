@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-gray-900">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Bandito{% endblock %}</title>
@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="text-gray-800">
+<body class="text-gray-800 dark:text-white transition-colors duration-500 ease-in-out">
 
     <div x-cloak x-data="themeSwitcher()">
 
@@ -19,20 +19,35 @@
             x-bind:class="isDark ? 'dark' : ''"
             x-cloak
             class="transition-colors duration-500 ease-in-out grow min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white"
+            {#class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 ease-in-out grow"#}
         >
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="p-4 mb-4 rounded text-sm font-medium
-                        {% if label == 'success' %}
-                            bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
-                        {% elseif label == 'error' %}
-                            bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
-                        {% endif %}
-                    ">
-                        {{ message }}
-                    </div>
+            <div class="pt-6 px-4 relative z-10">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div
+                            x-data="{ show: true }"
+                            x-show="show"
+                            x-transition.duration.300ms
+                            class="mx-auto max-w-3xl rounded-lg border-l-4 px-4 py-3 text-sm shadow-md
+                            {{ label == 'success' ? 'border-green-500 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : '' }}
+                            {{ label == 'error' ? 'border-red-500 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100' : '' }}
+                            {{ label == 'warning' ? 'border-yellow-500 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100' : '' }}
+                            {{ label == 'info' ? 'border-blue-500 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100' : '' }}"
+                        >
+                            <div class="flex items-center justify-between">
+                                <span>{{ message|raw }}</span>
+                                <button
+                                    @click="show = false"
+                                    class="ml-4 text-xl font-semibold leading-none focus:outline-none hover:opacity-80"
+                                    aria-label="Dismiss"
+                                >
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            </div>
 
             {% block body %}{% endblock %}
         </main>

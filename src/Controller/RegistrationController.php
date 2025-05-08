@@ -17,7 +17,9 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier) {}
+    public function __construct(
+        private EmailVerifier $emailVerifier
+    ) {}
 
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
@@ -61,7 +63,7 @@ class RegistrationController extends AbstractController
             'registrationForm' => $form,
         ]);
     }
-
+    /*
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request): Response
     {
@@ -70,10 +72,11 @@ class RegistrationController extends AbstractController
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
             /** @var User $user */
+    /*
             $user = $this->getUser();
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $exception->getReason());
+            $this->addFlash('error', $exception->getReason());
 
             return $this->redirectToRoute('app_register');
         }
@@ -83,4 +86,5 @@ class RegistrationController extends AbstractController
 
         return $this->redirectToRoute('app_login');
     }
+    */
 }

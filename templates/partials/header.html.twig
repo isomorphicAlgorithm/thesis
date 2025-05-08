@@ -1,59 +1,54 @@
 <header class="bg-gray-800 text-white flex items-center justify-between px-4 py-2 shadow">
 
-    <div class="flex items-center space-x-4">
-        <div class="bg-yellow-400 p-1 rounded max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
-            <img src="https://i.imgur.com/QG1OKhO.png" alt="Bandito Logo" class="h-10 w-auto max-w-[150px] object-contain drop-shadow-xl" />
-        </div>
+    <div class="flex items-center space-x-2">
+        <a href="{{ path('homepage') }}">
+            <img src="https://i.imgur.com/QG1OKhO.png" alt="Bandito Logo" class="h-10 w-auto scale-[1.4] origin-left object-contain drop-shadow-xl"/>
+        </a>
         <span class="text-2xl font-bold ml-4">BANDITO</span>
     </div>
 
     <div class="flex items-center space-x-4" x-cloak x-data="{ dropdownOpen: false }">
         {# Theme Toggle Button #}
         {% if app.user %}
-            {% if not path('app_login') %}
-                <a href="{{ path('app_profile') }}" class="text-white hover:underline">Profile</a>
-                <form method="post" action="{{ path('app_logout') }}">
-                    <button type="submit" class="bg-yellow-400 text-black px-3 py-1 rounded">Logout</button>
-                </form>
-            {% endif %}
+            {% include 'components/profile_dropdown.html.twig' %}
         {% else %}
-            {% if app.request.attributes.get('_route') != 'app_login' %}
+            {% if app.request.attributes.get('_route') not in ['app_login', 'app_register'] %}
                 <div class="relative" x-cloak x-data="{ open: false }">
                     <!-- Dropdown trigger -->
-                    <button x-cloak @click="open = !open" class="bg-yellow-400 text-black px-4 py-1 rounded font-semibold shadow hover:bg-yellow-300">
+                    <button x-cloak @click="dropdownOpen = !dropdownOpen"
+                        class="bg-yellow-400 text-black px-4 py-1 rounded font-semibold shadow hover:bg-yellow-300">
                         Sign In
                     </button>
 
                     <!-- Dropdown panel -->
                     <div
-                        x-show="open"
-                        x-cloak
-                        @click.away="open = false"
+                        x-show="dropdownOpen"
+                        @click.outside="dropdownOpen = false"
                         x-transition
-                        class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-yellow-300 z-50"
+                        class="absolute right-0 mt-2 w-64 bg-white text-black rounded-lg shadow-lg border border-yellow-300 z-50"
                     >
                         <!-- Close button -->
                         <div class="flex justify-end p-2">
-                            <button @click="open = false" class="text-gray-500 hover:text-black">&times;</button>
+                            <button @click="dropdownOpen = false" class="text-black hover:text-gray-600">&times;</button>
                         </div>
 
                         <!-- Sign In button -->
                         <div class="px-4 pb-3">
-                            <a href="{{ path('app_login') }}" class="block w-full text-center font-bold text-black bg-yellow-400 hover:bg-yellow-300 py-2 rounded-full shadow">
+                            <a href="{{ path('app_login') }}" class="block w-full text-center font-bold bg-yellow-400 hover:bg-yellow-300 text-black py-2 rounded-full shadow border border-yellow-700">
                                 Sign In
                             </a>
                         </div>
 
                         <!-- Register prompt -->
-                        <div class="px-4 pb-4 text-sm text-gray-700">
-                            <span>New Customer? </span>
+                        <div class="px-4 pb-4 text-sm text-gray-700 flex gap-2">
+                            <span>New Customer?</span>
                             <a href="{{ path('app_register') }}" class="text-blue-600 hover:underline">Create account</a>
                         </div>
                     </div>
                 </div>
             {% endif %}
         {% endif %}
-        <button @click="toggleTheme" class="transition-colors duration-300">
+        <button @click="toggleTheme" class="cursor-pointer transition-colors duration-300 hover:text-yellow-400">
             <span x-cloak x-text="isDark ? '🌙 Dark' : '🌞 Light'"></span>
         </button>
     </div>

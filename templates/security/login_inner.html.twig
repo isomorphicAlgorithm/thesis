@@ -2,7 +2,7 @@
 {{ form_start(loginForm) }}
 
     {% if form_errors(loginForm) %}
-        <div class="mb-4 rounded-lg border border-red-500 bg-red-100 text-red-800 px-4 py-3 text-sm font-medium flex items-center gap-2">
+        <div class="mt-4 rounded-lg border border-red-500 bg-red-100 text-red-800 px-4 py-3 text-sm font-medium flex items-center gap-2">
             <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14M12 12c4.418 0 8-3.582 8-8S16.418 4 12 4 4 7.582 4 12s3.582 8 8 8z" />
             </svg>
@@ -101,7 +101,7 @@
 
     {{ form_row(loginForm._token) }}
 
-    <div class="flex items-center mb-4">
+    <div class="flex items-center mt-4">
         {{ form_widget(loginForm.remember_me, {
             attr: {
                 class: 'h-4 w-4 text-yellow-500 bg-gray-800 border-gray-600 rounded focus:ring-yellow-500'
@@ -113,13 +113,27 @@
     </div>
 
     <div class="mt-6">
-        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md shadow-md transition transform hover:scale-105">
+        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 rounded-md shadow-md transition transform hover:scale-105">
             Sign In
         </button>
     </div>
 
-    <p class="mt-4 text-center text-sm text-gray-300">
-        Don't have an account? <a href="{{ path('app_register') }}" class="text-yellow-400 hover:underline">Register here</a>
-    </p>
-
 {{ form_end(loginForm) }}
+
+{% if showResendLink %}
+    <div class="mt-6 text-center">
+        <p class="text-sm text-yellow-400">Didn't receive a verification email?</p>
+
+        {{ form_start(resendVerificationForm, {
+            attr: { class: 'mt-2 flex justify-center gap-2 items-center' }
+        }) }}
+            <button type="submit" class="mt-1 bg-yellow-500 text-black px-4 py-2 rounded-md font-medium hover:bg-yellow-600 transition">
+                Resend Email
+            </button>
+        {{ form_end(resendVerificationForm) }}
+    </div>
+{% endif %}
+
+<p class="mt-4 text-center text-sm text-gray-300">
+    Don't have an account? <a href="{{ path('app_register') }}" class="text-yellow-400 hover:underline">Register here</a>
+</p>
