@@ -31,7 +31,10 @@ import './styles/app.css';
 import Alpine from 'alpinejs';
 import themeSwitcher from './js/theme';
 import loginForm from './js/login_form';
+import { inlineEditor } from './components/inline-editor.js';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
+window.inlineEditor = inlineEditor;
 window.Alpine = Alpine;
 Alpine.data('themeSwitcher', themeSwitcher);
 Alpine.data('loginForm', loginForm);

@@ -7,7 +7,11 @@ const config: Config = {
     './assets/**/*.{js,ts,vue}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        imdbYellow: '#F5C518',
+      },
+    },
   },
   plugins: [],
 };
