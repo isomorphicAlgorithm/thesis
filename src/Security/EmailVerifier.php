@@ -40,17 +40,6 @@ class EmailVerifier
         $this->mailer->send($email);
     }
 
-    /*
-     public function handleEmailConfirmation(Request $request, User $user): void
-    {
-        $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
-
-        $user->setIsVerified(true);
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-    }
-    */
     /**
      * @throws VerifyEmailException
      */

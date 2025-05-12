@@ -10,8 +10,8 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use App\Form\LoginForm;
-use App\Form\ResendVerification;
+use App\Form\LoginFormType;
+use App\Form\ResendVerificationType;
 use App\Security\EmailVerifier;
 use App\Security\LoginFormAuthenticator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -21,8 +21,18 @@ class LoginController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $loginFormAuthenticator, EmailVerifier $emailVerifier): Response
     {
-        $form = $this->createForm(LoginForm::class);
-        $resendVerificationForm = $this->createForm(ResendVerification::class);
+        if ($this->getUser()) {
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+
+            return $this->redirectToRoute('app_profile', [
+                'id' => $user->getId(),
+                'slug' => $user->getSlug(),
+            ]);
+        }
+
+        $form = $this->createForm(LoginFormType::class);
+        $resendVerificationForm = $this->createForm(ResendVerificationType::class);
 
         $form->handleRequest($request);
         $resendVerificationForm->handleRequest($request);
@@ -81,25 +91,11 @@ class LoginController extends AbstractController
                 return $this->redirectToRoute('app_login');
             }
         }
-        /*
-        if ($form->isSubmitted() && !$form->isValid()) {
-            if ($request->isXmlHttpRequest()) {
-                return new Response($this->renderView('security/login_inner.html.twig', [
-                    'loginForm' => $form,
-                ]), Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-        }
-*/
+
         return $this->render('security/login.html.twig', [
             'loginForm' => $form->createView(),
             'resendVerificationForm' => $resendVerificationForm->createView(),
             'showResendLink' => $showResendLink
         ]);
-        /*
-        // For normal (non-AJAX) or valid submission, render full template
-        return $this->render('security/login.html.twig', [
-            'loginForm' => $form,
-        ]);
-        */
     }
 }

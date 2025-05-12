@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class InlineEditController extends AbstractController
 {
     #[Route('/inline-edit', name: 'inline_edit', methods: ['POST'])]
-    public function inlineEdit(Request $request, EntityManagerInterface $em, UserRepository $userRepo, AlbumRepository $albumRepo, BandRepository $bandRepo, MusicianRepository $musicianRepo, SongRepository $songRepo ): JsonResponse
+    public function inlineEdit(Request $request, EntityManagerInterface $em, UserRepository $userRepo, AlbumRepository $albumRepo, BandRepository $bandRepo, MusicianRepository $musicianRepo, SongRepository $songRepo): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $entityType = $data['entityType'] ?? null;
@@ -46,12 +46,12 @@ class InlineEditController extends AbstractController
             return $this->json(['error' => 'Entity not found'], 404);
         }
 
-        // ✅ Authorization Logic
+        // Authorization Logic
         $currentUser = $this->getUser();
         $isOwner = match ($entityType) {
             'user' => $entity === $currentUser,
             'album', 'band', 'musician', 'song' =>
-                method_exists($entity, 'getOwner') && $entity->getOwner() === $currentUser,
+            method_exists($entity, 'getOwner') && $entity->getOwner() === $currentUser,
             default => false,
         };
 
