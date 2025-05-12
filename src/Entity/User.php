@@ -59,6 +59,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $links = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     /**
      * @var Collection<int, Rating>
      */
@@ -203,6 +206,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->links = $links;
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateSlug(): void
+    {
+        if ($this->username) {
+            $slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', $this->username));
+            $this->slug = trim($slug, '-');
+        }
     }
 
     /**

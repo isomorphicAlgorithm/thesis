@@ -18,7 +18,7 @@ class EmailVerifier
         private UserRepository $userRepository,
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private MailerInterface $mailer,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $em
     ) {}
 
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
@@ -74,6 +74,6 @@ class EmailVerifier
 
         $user->setIsVerified(true);
 
-        $this->entityManager->flush();
+        $this->em->flush();
     }
 }
