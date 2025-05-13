@@ -14,15 +14,17 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/bands')]
 class BandController extends AbstractController
 {
-    #[Route('/{id}-{name}', name: 'band_show', methods: ['GET'])]
-    public function show(Band $band, string $name, SluggerInterface $slugger): Response
+    #[Route('/{id}-{slug}', name: 'band_show', methods: ['GET'])]
+    public function show(Band $band, string $slug): Response
     {
-        $expectedName = $slugger->slug($band->getName())->lower();
+        // Get the band’s slug stored in the database
+        $expectedSlug = $band->getSlug();
 
-        if ($name != $expectedName) {
+        // If the slug in the URL doesn’t match the stored slug, redirect to the correct URL
+        if ($slug != $expectedSlug) {
             return $this->redirectToRoute('band_show', [
                 'id' => $band->getId(),
-                'name' => $expectedName,
+                'slug' => $expectedSlug,
             ]);
         }
 
