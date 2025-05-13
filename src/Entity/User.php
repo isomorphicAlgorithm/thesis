@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Contract\SlugSourceInterface;
 use App\Repository\UserRepository;
 use App\Entity\Traits\TimestampedEntity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\HasLifecycleCallbacks]
 
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -213,20 +214,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->slug;
     }
 
-    public function setSlug(string $slug): static
+    public function getSlugSource(): ?string
     {
-        $this->slug = $slug;
-        return $this;
+        return $this->username;
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateSlug(): void
+    public function setSlug(string $slug): void
     {
-        if ($this->username) {
-            $slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', $this->username));
-            $this->slug = trim($slug, '-');
-        }
+        $this->slug = $slug;
     }
 
     /**

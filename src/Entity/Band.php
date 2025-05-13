@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Contract\SlugSourceInterface;
 use App\Repository\BandRepository;
 use App\Entity\Traits\TimestampedEntity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Band
+class Band implements SlugSourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,6 +32,9 @@ class Band
 
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $cover_image = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
 
     /**
      * @var Collection<int, Musician>
@@ -122,6 +126,21 @@ class Band
         $this->cover_image = $cover_image;
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getSlugSource(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
     }
 
     /**
