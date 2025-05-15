@@ -39,24 +39,24 @@ class Event
      * @var Collection<int, Band>
      */
     #[ORM\ManyToMany(targetEntity: Band::class, inversedBy: 'events')]
-    private Collection $band_id;
+    private Collection $bands;
 
     /**
      * @var Collection<int, Musician>
      */
     #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'events')]
-    private Collection $musician_id;
+    private Collection $musicians;
 
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'event_id')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'events')]
     private Collection $media;
 
     public function __construct()
     {
-        $this->band_id = new ArrayCollection();
-        $this->musician_id = new ArrayCollection();
+        $this->bands = new ArrayCollection();
+        $this->musicians = new ArrayCollection();
         $this->media = new ArrayCollection();
     }
 
@@ -128,23 +128,23 @@ class Event
     /**
      * @return Collection<int, Band>
      */
-    public function getBandId(): Collection
+    public function getBands(): Collection
     {
-        return $this->band_id;
+        return $this->bands;
     }
 
-    public function addBandId(Band $bandId): static
+    public function addBand(Band $band): static
     {
-        if (!$this->band_id->contains($bandId)) {
-            $this->band_id->add($bandId);
+        if (!$this->bands->contains($band)) {
+            $this->bands->add($band);
         }
 
         return $this;
     }
 
-    public function removeBandId(Band $bandId): static
+    public function removeBand(Band $band): static
     {
-        $this->band_id->removeElement($bandId);
+        $this->bands->removeElement($band);
 
         return $this;
     }
@@ -152,23 +152,23 @@ class Event
     /**
      * @return Collection<int, Musician>
      */
-    public function getMusicianId(): Collection
+    public function getMusicians(): Collection
     {
-        return $this->musician_id;
+        return $this->musicians;
     }
 
-    public function addMusicianId(Musician $musicianId): static
+    public function addMusician(Musician $musician): static
     {
-        if (!$this->musician_id->contains($musicianId)) {
-            $this->musician_id->add($musicianId);
+        if (!$this->musicians->contains($musician)) {
+            $this->musicians->add($musician);
         }
 
         return $this;
     }
 
-    public function removeMusicianId(Musician $musicianId): static
+    public function removeMusician(Musician $musician): static
     {
-        $this->musician_id->removeElement($musicianId);
+        $this->musicians->removeElement($musician);
 
         return $this;
     }
@@ -185,7 +185,7 @@ class Event
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
-            $medium->addEventId($this);
+            $medium->addEvent($this);
         }
 
         return $this;
@@ -194,7 +194,7 @@ class Event
     public function removeMedium(Media $medium): static
     {
         if ($this->media->removeElement($medium)) {
-            $medium->removeEventId($this);
+            $medium->removeEvent($this);
         }
 
         return $this;

@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-gray-900" x-data="themeSwitcher()">
+<html lang="en" class="bg-gray-900 font-sans" x-data="themeSwitcher()">
 
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Bandito{% endblock %}</title>
+        <title>{% block title %} Bandito {% endblock %}</title>
+
+        {# Favicon links #}
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/favicon-48x48.png') }}">
+        <link rel="icon" type="image/png" sizes="64x64" href="{{ asset('images/favicon-64x64.png') }}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('images/favicon-96x96.png') }}">
+        <link rel="icon" type="image/png" sizes="128x128" href="{{ asset('images/favicon-128x128.png') }}">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/favicon-192x192.png') }}">
+        <link rel="icon" type="image/png" sizes="256x256" href="{{ asset('images/favicon-256x256.png') }}">
+        <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/favicon-512x512.png') }}">
 
         {{ encore_entry_link_tags('app') }}
 
@@ -13,7 +24,7 @@
     <body
         x-cloak
         :class="isDark ? 'theme-dark' : 'theme-light'"
-        class="flex flex-col min-h-screen text-gray-800 dark:text-white transition-colors duration-500 ease-in-out"
+        class="flex flex-col min-h-screen text-gray-800 dark:text-yellow-50 transition-colors duration-500 ease-in-out"
     >
 
         {% include 'partials/header.html.twig' %}
@@ -28,7 +39,7 @@
         </main>
 
         <!-- Static footer -->
-        <footer class="bg-black/70 text-white text-center p-4">
+        <footer class="bg-black/70 text-yellow-50 text-center p-4">
             <p>© 2025 Bandito. All rights reserved.</p>
         </footer>
 

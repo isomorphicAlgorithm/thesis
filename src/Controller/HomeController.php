@@ -31,4 +31,10 @@ class HomeController extends AbstractController
             'roles' => $roleInfo,
         ]);
     }
+
+    #[Route('/home', name: 'home_demo')]
+    public function homeDemo(): Response
+    {
+        return $this->render('home/demo_homepage.html.twig');
+    }
 }

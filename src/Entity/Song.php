@@ -49,43 +49,43 @@ class Song implements SlugSourceInterface
      * @var Collection<int, Band>
      */
     #[ORM\ManyToMany(targetEntity: Band::class, inversedBy: 'songs')]
-    private Collection $band_id;
+    private Collection $bands;
 
     /**
      * @var Collection<int, Musician>
      */
     #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'songs')]
-    private Collection $musician_id;
+    private Collection $musicians;
 
     /**
      * @var Collection<int, Album>
      */
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'songs')]
-    private Collection $album_id;
+    private Collection $albums;
 
     /**
      * @var Collection<int, Favorite>
      */
-    #[ORM\ManyToMany(targetEntity: Favorite::class, mappedBy: 'song_id')]
+    #[ORM\ManyToMany(targetEntity: Favorite::class, mappedBy: 'songs')]
     private Collection $favorites;
 
     /**
      * @var Collection<int, CustomListItem>
      */
-    #[ORM\ManyToMany(targetEntity: CustomListItem::class, mappedBy: 'song_id')]
+    #[ORM\ManyToMany(targetEntity: CustomListItem::class, mappedBy: 'songs')]
     private Collection $custom_list_items;
 
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'song_id')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'songs')]
     private Collection $media;
 
     public function __construct()
     {
-        $this->band_id = new ArrayCollection();
-        $this->musician_id = new ArrayCollection();
-        $this->album_id = new ArrayCollection();
+        $this->bands = new ArrayCollection();
+        $this->musicians = new ArrayCollection();
+        $this->albums = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->custom_list_items = new ArrayCollection();
         $this->media = new ArrayCollection();
@@ -198,23 +198,23 @@ class Song implements SlugSourceInterface
     /**
      * @return Collection<int, Band>
      */
-    public function getBandId(): Collection
+    public function getBands(): Collection
     {
-        return $this->band_id;
+        return $this->bands;
     }
 
-    public function addBandId(Band $bandId): static
+    public function addBand(Band $band): static
     {
-        if (!$this->band_id->contains($bandId)) {
-            $this->band_id->add($bandId);
+        if (!$this->bands->contains($band)) {
+            $this->bands->add($band);
         }
 
         return $this;
     }
 
-    public function removeBandId(Band $bandId): static
+    public function removeBand(Band $band): static
     {
-        $this->band_id->removeElement($bandId);
+        $this->bands->removeElement($band);
 
         return $this;
     }
@@ -222,23 +222,23 @@ class Song implements SlugSourceInterface
     /**
      * @return Collection<int, Musician>
      */
-    public function getMusicianId(): Collection
+    public function getMusicians(): Collection
     {
-        return $this->musician_id;
+        return $this->musicians;
     }
 
-    public function addMusicianId(Musician $musicianId): static
+    public function addMusician(Musician $musician): static
     {
-        if (!$this->musician_id->contains($musicianId)) {
-            $this->musician_id->add($musicianId);
+        if (!$this->musicians->contains($musician)) {
+            $this->musicians->add($musician);
         }
 
         return $this;
     }
 
-    public function removeMusicianId(Musician $musicianId): static
+    public function removeMusician(Musician $musician): static
     {
-        $this->musician_id->removeElement($musicianId);
+        $this->musicians->removeElement($musician);
 
         return $this;
     }
@@ -246,23 +246,23 @@ class Song implements SlugSourceInterface
     /**
      * @return Collection<int, Album>
      */
-    public function getAlbumId(): Collection
+    public function getAlbums(): Collection
     {
-        return $this->album_id;
+        return $this->albums;
     }
 
-    public function addAlbumId(Album $albumId): static
+    public function addAlbum(Album $album): static
     {
-        if (!$this->album_id->contains($albumId)) {
-            $this->album_id->add($albumId);
+        if (!$this->albums->contains($album)) {
+            $this->albums->add($album);
         }
 
         return $this;
     }
 
-    public function removeAlbumId(Album $albumId): static
+    public function removeAlbum(Album $album): static
     {
-        $this->album_id->removeElement($albumId);
+        $this->albums->removeElement($album);
 
         return $this;
     }
@@ -279,7 +279,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->favorites->contains($favorite)) {
             $this->favorites->add($favorite);
-            $favorite->addSongId($this);
+            $favorite->addSong($this);
         }
 
         return $this;
@@ -288,7 +288,7 @@ class Song implements SlugSourceInterface
     public function removeFavorite(Favorite $favorite): static
     {
         if ($this->favorites->removeElement($favorite)) {
-            $favorite->removeSongId($this);
+            $favorite->removeSong($this);
         }
 
         return $this;
@@ -306,7 +306,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->custom_list_items->contains($customListItem)) {
             $this->custom_list_items->add($customListItem);
-            $customListItem->addSongId($this);
+            $customListItem->addSong($this);
         }
 
         return $this;
@@ -315,7 +315,7 @@ class Song implements SlugSourceInterface
     public function removeCustomListItem(CustomListItem $customListItem): static
     {
         if ($this->custom_list_items->removeElement($customListItem)) {
-            $customListItem->removeSongId($this);
+            $customListItem->removeSong($this);
         }
 
         return $this;
@@ -333,7 +333,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
-            $medium->addSongId($this);
+            $medium->addSong($this);
         }
 
         return $this;
@@ -342,7 +342,7 @@ class Song implements SlugSourceInterface
     public function removeMedium(Media $medium): static
     {
         if ($this->media->removeElement($medium)) {
-            $medium->removeSongId($this);
+            $medium->removeSong($this);
         }
 
         return $this;

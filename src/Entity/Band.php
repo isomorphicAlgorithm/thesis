@@ -39,31 +39,31 @@ class Band implements SlugSourceInterface
     /**
      * @var Collection<int, Musician>
      */
-    #[ORM\ManyToMany(targetEntity: Musician::class, mappedBy: 'band_id')]
+    #[ORM\ManyToMany(targetEntity: Musician::class, mappedBy: 'bands')]
     private Collection $musicians;
 
     /**
      * @var Collection<int, Album>
      */
-    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'band_id')]
+    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'bands')]
     private Collection $albums;
 
     /**
      * @var Collection<int, Song>
      */
-    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'band_id')]
+    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'bands')]
     private Collection $songs;
 
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'band_id')]
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'bands')]
     private Collection $events;
 
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'band_id')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'bands')]
     private Collection $media;
 
     public function __construct()
@@ -155,7 +155,7 @@ class Band implements SlugSourceInterface
     {
         if (!$this->musicians->contains($musician)) {
             $this->musicians->add($musician);
-            $musician->addBandId($this);
+            $musician->addBand($this);
         }
 
         return $this;
@@ -164,7 +164,7 @@ class Band implements SlugSourceInterface
     public function removeMusician(Musician $musician): static
     {
         if ($this->musicians->removeElement($musician)) {
-            $musician->removeBandId($this);
+            $musician->removeBand($this);
         }
 
         return $this;
@@ -182,7 +182,7 @@ class Band implements SlugSourceInterface
     {
         if (!$this->albums->contains($album)) {
             $this->albums->add($album);
-            $album->addBandId($this);
+            $album->addBand($this);
         }
 
         return $this;
@@ -191,7 +191,7 @@ class Band implements SlugSourceInterface
     public function removeAlbum(Album $album): static
     {
         if ($this->albums->removeElement($album)) {
-            $album->removeBandId($this);
+            $album->removeBand($this);
         }
 
         return $this;
@@ -209,7 +209,7 @@ class Band implements SlugSourceInterface
     {
         if (!$this->songs->contains($song)) {
             $this->songs->add($song);
-            $song->addBandId($this);
+            $song->addBand($this);
         }
 
         return $this;
@@ -218,7 +218,7 @@ class Band implements SlugSourceInterface
     public function removeSong(Song $song): static
     {
         if ($this->songs->removeElement($song)) {
-            $song->removeBandId($this);
+            $song->removeBand($this);
         }
 
         return $this;
@@ -236,7 +236,7 @@ class Band implements SlugSourceInterface
     {
         if (!$this->events->contains($event)) {
             $this->events->add($event);
-            $event->addBandId($this);
+            $event->addBand($this);
         }
 
         return $this;
@@ -245,7 +245,7 @@ class Band implements SlugSourceInterface
     public function removeEvent(Event $event): static
     {
         if ($this->events->removeElement($event)) {
-            $event->removeBandId($this);
+            $event->removeBand($this);
         }
 
         return $this;
@@ -263,7 +263,7 @@ class Band implements SlugSourceInterface
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
-            $medium->addBandId($this);
+            $medium->addBand($this);
         }
 
         return $this;
@@ -272,7 +272,7 @@ class Band implements SlugSourceInterface
     public function removeMedium(Media $medium): static
     {
         if ($this->media->removeElement($medium)) {
-            $medium->removeBandId($this);
+            $medium->removeBand($this);
         }
 
         return $this;

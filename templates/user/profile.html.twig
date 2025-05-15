@@ -1,6 +1,8 @@
 {# templates/user/profile.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block title %} {{ user.username }} | Bandito {% endblock %}
+
 {% block body %}
 <div class="bg-black/70 border border-yellow-500 rounded-xl p-6 max-w-2xl mx-auto space-y-6">
     <!-- Profile Info -->
@@ -16,7 +18,7 @@
                 />
                 <!-- Overlay on hover -->
                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 hover:custom-glow transition-opacity duration-300 flex items-center justify-center rounded-full">
-                    <div class="text-white text-xs font-semibold flex items-center gap-1">
+                    <div class="text-yellow-50 text-xs font-semibold flex items-center gap-1">
                         <!-- Pencil Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6-6m2 2l2 2M2 20h20" />
@@ -38,7 +40,7 @@
 
         <!-- Username and Bio -->
         <div class="space-y-1">
-            <h1 class="text-3xl font-semibold text-white">{{ user.username }}</h1>
+            <h1 class="text-3xl font-semibold text-yellow-50">{{ user.username }}</h1>
             <p class="text-sm text-gray-400">
                 <span class="inline-flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -64,22 +66,22 @@
     <div class="grid grid-cols-2 gap-4">
         <div class="bg-yellow-600/10 text-center rounded-lg p-4 border border-yellow-500">
             <p class="text-yellow-300 font-semibold">Ratings</p>
-            <p class="text-2xl font-bold text-white">{{ user.ratings|length }}</p>
+            <p class="text-2xl font-bold text-yellow-50">{{ user.ratings|length }}</p>
         </div>
         <div class="bg-yellow-600/10 text-center rounded-lg p-4 border border-yellow-500">
             <p class="text-yellow-300 font-semibold">Favorites</p>
-            <p class="text-2xl font-bold text-white">{{ user.favorites|length }}</p>
+            <p class="text-2xl font-bold text-yellow-50">{{ user.favorites|length }}</p>
         </div>
     </div>
 
     {# Album Ratings Section #}
-    <h2 class="text-2xl font-semibold text-white mb-4">Ratings</h2>
+    <h2 class="text-2xl font-semibold text-yellow-50 mb-4">Ratings</h2>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
         {% for rating in user.ratings %}
             <div class="bg-gray-900 rounded-lg overflow-hidden shadow-md">
                 <img src="{{ rating.album.coverUrl }}" alt="{{ rating.album.title }}"
                      class="w-full h-48 object-cover">
-                <div class="p-2 text-white">
+                <div class="p-2 text-yellow-50">
                     <div class="font-medium">{{ rating.album.title }}</div>
                     <div class="text-sm text-gray-400">Rated {{ rating.score }}/10</div>
                 </div>
@@ -90,13 +92,13 @@
     </div>
 
     {# Favorite Songs Section #}
-    <h2 class="text-2xl font-semibold text-white mt-10 mb-4">Favorite Songs</h2>
+    <h2 class="text-2xl font-semibold text-yellow-50 mt-10 mb-4">Favorite Songs</h2>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
         {% for song in user.favorites %}
             <div class="bg-gray-900 rounded-lg overflow-hidden shadow-md">
                 <img src="{{ song.coverUrl }}" alt="{{ song.title }}"
                      class="w-full h-48 object-cover">
-                <div class="p-2 text-white">
+                <div class="p-2 text-yellow-50">
                     <div class="font-medium">{{ song.title }}</div>
                     <div class="text-sm text-gray-400">by {{ song.artist }}</div>
                 </div>

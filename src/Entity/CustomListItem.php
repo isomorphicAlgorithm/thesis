@@ -23,25 +23,25 @@ class CustomListItem
      * @var Collection<int, CustomList>
      */
     #[ORM\ManyToMany(targetEntity: CustomList::class, inversedBy: 'custom_list_items')]
-    private Collection $custom_list_id;
+    private Collection $custom_lists;
 
     /**
      * @var Collection<int, Album>
      */
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'custom_list_items')]
-    private Collection $album_id;
+    private Collection $albums;
 
     /**
      * @var Collection<int, Song>
      */
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'custom_list_items')]
-    private Collection $song_id;
+    private Collection $songs;
 
     public function __construct()
     {
-        $this->custom_list_id = new ArrayCollection();
-        $this->album_id = new ArrayCollection();
-        $this->song_id = new ArrayCollection();
+        $this->custom_lists = new ArrayCollection();
+        $this->albums = new ArrayCollection();
+        $this->songs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,23 +52,23 @@ class CustomListItem
     /**
      * @return Collection<int, CustomList>
      */
-    public function getCustomListId(): Collection
+    public function getCustomLists(): Collection
     {
-        return $this->custom_list_id;
+        return $this->custom_lists;
     }
 
-    public function addCustomListId(CustomList $customListId): static
+    public function addCustomList(CustomList $customList): static
     {
-        if (!$this->custom_list_id->contains($customListId)) {
-            $this->custom_list_id->add($customListId);
+        if (!$this->custom_lists->contains($customList)) {
+            $this->custom_lists->add($customList);
         }
 
         return $this;
     }
 
-    public function removeCustomListId(CustomList $customListId): static
+    public function removeCustomList(CustomList $customList): static
     {
-        $this->custom_list_id->removeElement($customListId);
+        $this->custom_lists->removeElement($customList);
 
         return $this;
     }
@@ -76,23 +76,23 @@ class CustomListItem
     /**
      * @return Collection<int, Album>
      */
-    public function getAlbumId(): Collection
+    public function getAlbums(): Collection
     {
-        return $this->album_id;
+        return $this->albums;
     }
 
-    public function addAlbumId(Album $albumId): static
+    public function addAlbum(Album $album): static
     {
-        if (!$this->album_id->contains($albumId)) {
-            $this->album_id->add($albumId);
+        if (!$this->albums->contains($album)) {
+            $this->albums->add($album);
         }
 
         return $this;
     }
 
-    public function removeAlbumId(Album $albumId): static
+    public function removeAlbum(Album $album): static
     {
-        $this->album_id->removeElement($albumId);
+        $this->albums->removeElement($album);
 
         return $this;
     }
@@ -100,23 +100,23 @@ class CustomListItem
     /**
      * @return Collection<int, Song>
      */
-    public function getSongId(): Collection
+    public function getSongs(): Collection
     {
-        return $this->song_id;
+        return $this->songs;
     }
 
-    public function addSongId(Song $songId): static
+    public function addSong(Song $song): static
     {
-        if (!$this->song_id->contains($songId)) {
-            $this->song_id->add($songId);
+        if (!$this->songs->contains($song)) {
+            $this->songs->add($song);
         }
 
         return $this;
     }
 
-    public function removeSongId(Song $songId): static
+    public function removeSong(Song $song): static
     {
-        $this->song_id->removeElement($songId);
+        $this->songs->removeElement($song);
 
         return $this;
     }

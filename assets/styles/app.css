@@ -25,9 +25,9 @@ body.theme-light {
 body.theme-dark {
     background: linear-gradient(
         to bottom,
-        #1a120b 0%,      /* black coffee */
-        #2c1b10 60%,     /* dark walnut */
-        #3b2d19 100%     /* warm cocoa brown */
+        #1a120b 0%,
+        #2c1b10 60%,
+        #3b2d19 100%
     );
 }
 

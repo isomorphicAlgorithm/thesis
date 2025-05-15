@@ -26,39 +26,39 @@ class Media
      * @var Collection<int, Band>
      */
     #[ORM\ManyToMany(targetEntity: Band::class, inversedBy: 'media')]
-    private Collection $band_id;
+    private Collection $bands;
 
     /**
      * @var Collection<int, Musician>
      */
     #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'media')]
-    private Collection $musician_id;
+    private Collection $musicians;
 
     /**
      * @var Collection<int, Album>
      */
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'media')]
-    private Collection $album_id;
+    private Collection $albums;
 
     /**
      * @var Collection<int, Song>
      */
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'media')]
-    private Collection $song_id;
+    private Collection $songs;
 
     /**
      * @var Collection<int, Event>
      */
     #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'media')]
-    private Collection $event_id;
+    private Collection $events;
 
     public function __construct()
     {
-        $this->band_id = new ArrayCollection();
-        $this->musician_id = new ArrayCollection();
-        $this->album_id = new ArrayCollection();
-        $this->song_id = new ArrayCollection();
-        $this->event_id = new ArrayCollection();
+        $this->bands = new ArrayCollection();
+        $this->musicians = new ArrayCollection();
+        $this->albums = new ArrayCollection();
+        $this->songs = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,23 +81,23 @@ class Media
     /**
      * @return Collection<int, Band>
      */
-    public function getBandId(): Collection
+    public function getBands(): Collection
     {
-        return $this->band_id;
+        return $this->bands;
     }
 
-    public function addBandId(Band $bandId): static
+    public function addBand(Band $band): static
     {
-        if (!$this->band_id->contains($bandId)) {
-            $this->band_id->add($bandId);
+        if (!$this->bands->contains($band)) {
+            $this->bands->add($band);
         }
 
         return $this;
     }
 
-    public function removeBandId(Band $bandId): static
+    public function removeBand(Band $band): static
     {
-        $this->band_id->removeElement($bandId);
+        $this->bands->removeElement($band);
 
         return $this;
     }
@@ -105,23 +105,23 @@ class Media
     /**
      * @return Collection<int, Musician>
      */
-    public function getMusicianId(): Collection
+    public function getMusicians(): Collection
     {
-        return $this->musician_id;
+        return $this->musicians;
     }
 
-    public function addMusicianId(Musician $musicianId): static
+    public function addMusician(Musician $musician): static
     {
-        if (!$this->musician_id->contains($musicianId)) {
-            $this->musician_id->add($musicianId);
+        if (!$this->musicians->contains($musician)) {
+            $this->musicians->add($musician);
         }
 
         return $this;
     }
 
-    public function removeMusicianId(Musician $musicianId): static
+    public function removeMusician(Musician $musician): static
     {
-        $this->musician_id->removeElement($musicianId);
+        $this->musicians->removeElement($musician);
 
         return $this;
     }
@@ -129,23 +129,23 @@ class Media
     /**
      * @return Collection<int, Album>
      */
-    public function getAlbumId(): Collection
+    public function getAlbums(): Collection
     {
-        return $this->album_id;
+        return $this->albums;
     }
 
-    public function addAlbumId(Album $albumId): static
+    public function addAlbum(Album $album): static
     {
-        if (!$this->album_id->contains($albumId)) {
-            $this->album_id->add($albumId);
+        if (!$this->albums->contains($album)) {
+            $this->albums->add($album);
         }
 
         return $this;
     }
 
-    public function removeAlbumId(Album $albumId): static
+    public function removeAlbum(Album $album): static
     {
-        $this->album_id->removeElement($albumId);
+        $this->albums->removeElement($album);
 
         return $this;
     }
@@ -153,23 +153,23 @@ class Media
     /**
      * @return Collection<int, Song>
      */
-    public function getSongId(): Collection
+    public function getSongs(): Collection
     {
-        return $this->song_id;
+        return $this->songs;
     }
 
-    public function addSongId(Song $songId): static
+    public function addSong(Song $song): static
     {
-        if (!$this->song_id->contains($songId)) {
-            $this->song_id->add($songId);
+        if (!$this->songs->contains($song)) {
+            $this->songs->add($song);
         }
 
         return $this;
     }
 
-    public function removeSongId(Song $songId): static
+    public function removeSong(Song $song): static
     {
-        $this->song_id->removeElement($songId);
+        $this->songs->removeElement($song);
 
         return $this;
     }
@@ -177,23 +177,23 @@ class Media
     /**
      * @return Collection<int, Event>
      */
-    public function getEventId(): Collection
+    public function getEvents(): Collection
     {
-        return $this->event_id;
+        return $this->events;
     }
 
-    public function addEventId(Event $eventId): static
+    public function addEvent(Event $event): static
     {
-        if (!$this->event_id->contains($eventId)) {
-            $this->event_id->add($eventId);
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
         }
 
         return $this;
     }
 
-    public function removeEventId(Event $eventId): static
+    public function removeEvent(Event $event): static
     {
-        $this->event_id->removeElement($eventId);
+        $this->events->removeElement($event);
 
         return $this;
     }

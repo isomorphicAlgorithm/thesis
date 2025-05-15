@@ -4,14 +4,14 @@
 >
     <div x-show="!editing" @click="startEditing" class="cursor-pointer hover:bg-yellow-600/10 transition transition-colors duration-500 rounded-md p-2 hover:custom-glow">
         <span
-            :class="value.trim() === '' ? 'italic text-white' : 'text-white'"
+            :class="value.trim() === '' ? 'italic text-yellow-50' : 'text-yellow-50'"
             class="text-sm"
             x-text="value.trim() !== '' ? value : 'Click to add a bio…'"
         />
     </div>
 
     <div x-show="editing" class="flex flex-col">
-        <textarea x-model="value" class="font-semibold text-white border border-yellow rounded p-2"></textarea>
-        <button @click="save" class="cursor-pointer mt-1 rounded-xl text-sm font-semibold text-white hover:underline self-end">Save</button>
+        <textarea x-model="value" class="font-semibold text-yellow-50 border border-yellow rounded p-2"></textarea>
+        <button @click="save" class="cursor-pointer mt-1 rounded-xl text-sm font-semibold text-yellow-50 hover:underline self-end">Save</button>
     </div>
 </div>

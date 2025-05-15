@@ -35,7 +35,7 @@ class CustomList
     /**
      * @var Collection<int, CustomListItem>
      */
-    #[ORM\ManyToMany(targetEntity: CustomListItem::class, mappedBy: 'custom_list_id')]
+    #[ORM\ManyToMany(targetEntity: CustomListItem::class, mappedBy: 'custom_lists')]
     private Collection $custom_list_items;
 
     public function __construct()
@@ -108,7 +108,7 @@ class CustomList
     {
         if (!$this->custom_list_items->contains($customListItem)) {
             $this->custom_list_items->add($customListItem);
-            $customListItem->addCustomListId($this);
+            $customListItem->addCustomList($this);
         }
 
         return $this;
@@ -117,7 +117,7 @@ class CustomList
     public function removeCustomListItem(CustomListItem $customListItem): static
     {
         if ($this->custom_list_items->removeElement($customListItem)) {
-            $customListItem->removeCustomListId($this);
+            $customListItem->removeCustomList($this);
         }
 
         return $this;

@@ -26,11 +26,11 @@ class Favorite
      * @var Collection<int, Song>
      */
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'favorites')]
-    private Collection $song_id;
+    private Collection $songs;
 
     public function __construct()
     {
-        $this->song_id = new ArrayCollection();
+        $this->songs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,23 +53,23 @@ class Favorite
     /**
      * @return Collection<int, Song>
      */
-    public function getSongId(): Collection
+    public function getSongs(): Collection
     {
-        return $this->song_id;
+        return $this->songs;
     }
 
-    public function addSongId(Song $songId): static
+    public function addSong(Song $song): static
     {
-        if (!$this->song_id->contains($songId)) {
-            $this->song_id->add($songId);
+        if (!$this->songs->contains($song)) {
+            $this->songs->add($song);
         }
 
         return $this;
     }
 
-    public function removeSongId(Song $songId): static
+    public function removeSong(Song $song): static
     {
-        $this->song_id->removeElement($songId);
+        $this->songs->removeElement($song);
 
         return $this;
     }

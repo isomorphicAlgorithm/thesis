@@ -13,6 +13,9 @@ const config: ExtendedConfig = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                display: ['"Nunito"', 'sans-serif'],
+            },
         },
     },
     plugins: [],

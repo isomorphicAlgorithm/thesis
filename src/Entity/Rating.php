@@ -33,11 +33,11 @@ class Rating
      * @var Collection<int, Album>
      */
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'ratings')]
-    private Collection $album_id;
+    private Collection $albums;
 
     public function __construct()
     {
-        $this->album_id = new ArrayCollection();
+        $this->albums = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,23 +72,23 @@ class Rating
     /**
      * @return Collection<int, Album>
      */
-    public function getAlbumId(): Collection
+    public function getAlbums(): Collection
     {
-        return $this->album_id;
+        return $this->albums;
     }
 
-    public function addAlbumId(Album $albumId): static
+    public function addAlbum(Album $album): static
     {
-        if (!$this->album_id->contains($albumId)) {
-            $this->album_id->add($albumId);
+        if (!$this->albums->contains($album)) {
+            $this->albums->add($album);
         }
 
         return $this;
     }
 
-    public function removeAlbumId(Album $albumId): static
+    public function removeAlbum(Album $album): static
     {
-        $this->album_id->removeElement($albumId);
+        $this->albums->removeElement($album);
 
         return $this;
     }

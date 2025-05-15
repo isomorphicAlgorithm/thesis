@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %} {{ musician.name }} | Bandito {% endblock %}
+
 {% block body %}
-<div class="max-w-5xl mx-auto bg-black/70 text-white p-6 rounded-lg border border-yellow-500 space-y-6">
+<div class="max-w-5xl mx-auto bg-black/70 text-yellow-50 p-6 rounded-lg border border-yellow-500 space-y-6">
 
     <!-- Musician Header -->
-    <div class="flex flex-col md:flex-row gap-6 bg-yellow-600/10 text-white p-6 rounded-2xl shadow-lg mb-6">
+    <div class="flex flex-col md:flex-row gap-6 bg-yellow-600/10 text-yellow-50 p-6 rounded-2xl shadow-lg mb-6">
 
         <!-- Musician Cover Image -->
         <div>
@@ -31,7 +33,7 @@
             </div>
 
             <div>
-                <h2 class="text-xl font-semibold text-white mb-2 flex items-center gap-2">
+                <h2 class="text-xl font-semibold text-yellow-50 mb-2 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-yellow-400 size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                     </svg>
@@ -45,7 +47,7 @@
     <!-- Links -->
     {% if musician.links %}
     <div class="mt-4">
-        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-xl font-bold text-yellow-50 mb-4 flex items-center gap-2">
             <i class="fas fa-link text-yellow-400"></i>
             Links
         </h2>
@@ -57,7 +59,7 @@
 
     <!-- Albums -->
     <div>
-        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-3">
+        <h2 class="text-xl font-bold text-yellow-50 mb-4 flex items-center gap-3">
             <i class="fas fa-compact-disc text-yellow-400"></i>
             Albums
         </h2>
@@ -78,8 +80,11 @@
 
     <!-- Bands -->
     <div class="mt-4">
-        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-3">
-            <i class="fas fa-users text-yellow-400"></i>
+        <h2 class="text-xl font-bold text-yellow-50 mb-4 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-yellow-400">
+                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clip-rule="evenodd" />
+                <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
+            </svg>
             Bands
         </h2>
 
@@ -97,7 +102,7 @@
                             >
                         </div>
 
-                        <p class="text-white font-semibold mt-4 text-lg group-hover:text-yellow-400 transition-colors">
+                        <p class="text-yellow-50 font-semibold mt-4 text-lg group-hover:text-yellow-400 transition-colors">
                             {{ band.name }}
                         </p>
                     </a>
