@@ -22,10 +22,10 @@ class LoginFormType extends AbstractType
                 'attr' => ['autocomplete' => 'email'],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Email is required',
+                        'message' => 'Email is required.',
                     ]),
                     new Email([
-                        'message' => 'Please enter a valid email address',
+                        'message' => 'Please enter a valid email address.',
                     ]),
                 ],
             ])
@@ -37,9 +37,8 @@ class LoginFormType extends AbstractType
                     ]),
                     new Length([
                         'min' => 8,
-                        'minMessage' => 'Your password should be at least 8 characters',
+                        'minMessage' => 'Your password should be at least {{ limit }} characters.',
                         'max' => 128,
-                        'maxMessage' => 'Your password should be at maximum 128 characters'
                     ]),
                 ],
             ])

@@ -1,13 +1,42 @@
 @import "tailwindcss";
 main {
     transition: background-color 0.5s ease, color 0.5s ease;
-  }
+}
 @custom-variant dark (&:where(.dark, .dark *));
 ul.form-errors {
-  @apply text-red-400 text-sm mt-1 list-none;
+    @apply text-red-400 text-sm mt-1 list-none;
 }
 @layer utilities {
-  [x-cloak] {
-      display: none !important;
-  }
+    [x-cloak] {
+        display: none !important;
+    }
 }
+
+body.theme-light {
+    background: linear-gradient(
+        to bottom,
+        #a47148 0%,
+        #f8f6f2 40%,
+        #cfd4dc 100%
+    );
+    color: #1f2937;
+}
+
+body.theme-dark {
+    background: linear-gradient(
+        to bottom,
+        #1a120b 0%,      /* black coffee */
+        #2c1b10 60%,     /* dark walnut */
+        #3b2d19 100%     /* warm cocoa brown */
+    );
+}
+
+.hover\:custom-glow:hover {
+    box-shadow: 0 0 10px #facc15;
+}
+
+button:hover {
+    box-shadow: 0 0 10px #facc15; /* Tailwind yellow-400 */
+}
+
+@import "tailwindcss/utilities";

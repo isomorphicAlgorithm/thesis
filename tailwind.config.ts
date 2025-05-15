@@ -1,19 +1,21 @@
 import type { Config } from 'tailwindcss'
+interface ExtendedConfig extends Config {
+    safelist?: string[];
+}
 
-const config: Config = {
-  darkMode: 'class',
-  content: [
-    './templates/**/*.html.twig',
-    './assets/**/*.{js,ts,vue}',
-  ],
-  theme: {
-    extend: {
-      colors: {
-        imdbYellow: '#F5C518',
-      },
+const config: ExtendedConfig = {
+    darkMode: 'class',
+    content: [
+        './templates/**/*.html.twig',
+        './assets/**/*.{js,ts,vue}'
+    ],
+    safelist: [
+    ],
+    theme: {
+        extend: {
+        },
     },
-  },
-  plugins: [],
+    plugins: [],
 };
 
 export default config;

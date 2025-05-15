@@ -2,7 +2,7 @@
     x-data="inlineEditor('{{ entityType }}', '{{ entityId }}', '{{ field }}', '{{ initialValue|e('js') }}', '{{ path('inline_edit') }}', '{{ csrf_token('inline_edit') }}')"
     class="group"
 >
-    <div x-show="!editing" @click="startEditing" class="cursor-pointer hover:bg-gray-700 transition transition-colors duration-200 rounded-md p-2">
+    <div x-show="!editing" @click="startEditing" class="cursor-pointer hover:bg-yellow-600/10 transition transition-colors duration-500 rounded-md p-2 hover:custom-glow">
         <span
             :class="value.trim() === '' ? 'italic text-white' : 'text-white'"
             class="text-sm"
@@ -12,6 +12,6 @@
 
     <div x-show="editing" class="flex flex-col">
         <textarea x-model="value" class="font-semibold text-white border border-yellow rounded p-2"></textarea>
-        <button @click="save" class="mt-1 text-sm font-semibold text-white hover:underline self-end">Save</button>
+        <button @click="save" class="cursor-pointer mt-1 rounded-xl text-sm font-semibold text-white hover:underline self-end">Save</button>
     </div>
 </div>

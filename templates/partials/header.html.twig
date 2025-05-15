@@ -1,4 +1,4 @@
-<header class="bg-gray-800 text-white flex items-center justify-between px-4 py-2 shadow">
+<header class="bg-black/70 text-white flex items-center justify-between px-4 py-2 shadow">
 
     <div class="flex items-center space-x-2">
         <a href="{{ path('homepage') }}">
@@ -8,48 +8,11 @@
     </div>
 
     <div class="flex items-center space-x-4" x-cloak x-data="{ dropdownOpen: false }">
-        {# Theme Toggle Button #}
-        {% if app.user %}
-            {% include 'components/profile_dropdown.html.twig' %}
-        {% else %}
-            {% if app.request.attributes.get('_route') not in ['app_login', 'app_register'] %}
-                <div class="relative" x-cloak x-data="{ open: false }">
-                    <!-- Dropdown trigger -->
-                    <button x-cloak @click="dropdownOpen = !dropdownOpen"
-                        class="bg-yellow-400 text-black px-4 py-1 rounded font-semibold shadow hover:bg-yellow-300">
-                        Sign In
-                    </button>
 
-                    <!-- Dropdown panel -->
-                    <div
-                        x-show="dropdownOpen"
-                        @click.outside="dropdownOpen = false"
-                        x-transition
-                        class="absolute right-0 mt-2 w-64 bg-white text-black rounded-lg shadow-lg border border-yellow-300 z-50"
-                    >
-                        <!-- Close button -->
-                        <div class="flex justify-end p-2">
-                            <button @click="dropdownOpen = false" class="text-black hover:text-gray-600">&times;</button>
-                        </div>
+        {% include 'partials/header/sign_in_dropdown.html.twig' %}
 
-                        <!-- Sign In button -->
-                        <div class="px-4 pb-3">
-                            <a href="{{ path('app_login') }}" class="block w-full text-center font-bold bg-yellow-400 hover:bg-yellow-300 text-black py-2 rounded-full shadow border border-yellow-700">
-                                Sign In
-                            </a>
-                        </div>
+        {% include 'partials/header/theme_switcher.html.twig' %}
 
-                        <!-- Register prompt -->
-                        <div class="px-4 pb-4 text-sm text-gray-700 flex gap-2">
-                            <span>New Customer?</span>
-                            <a href="{{ path('app_register') }}" class="text-blue-600 hover:underline">Create account</a>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        {% endif %}
-        <button @click="toggleTheme" class="cursor-pointer transition-colors duration-300 hover:text-yellow-400">
-            <span x-cloak x-text="isDark ? '🌙 Dark' : '🌞 Light'"></span>
-        </button>
     </div>
+
 </header>

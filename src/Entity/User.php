@@ -35,16 +35,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
 
-    #[Assert\NotBlank]
     #[ORM\Column(length: 32)]
-    #[Assert\NotBlank(message: 'Username cannot be blank')]
-    #[Assert\Length(min: 4, max: 32)]
     private ?string $username = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Email]
-    #[Assert\NotBlank(message: 'Email cannot be blank')]
-    #[Assert\Email(message: 'Please enter a valid email address')]
     #[ORM\Column(length: 128, unique: true)]
     private ?string $email = null;
 

@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -24,21 +25,34 @@ class RegistrationFormType extends AbstractType
             ->add('username', TextType::class, [
                 'label' => 'Username',
                 'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(['min' => 4, 'max' => 128]),
+                    new NotBlank([
+                        'message' => 'Username is required.',
+                    ]),
+                    new Length([
+                        'min' => 6,
+                        'minMessage' => 'Your username should be at least 6 characters.',
+                        'max' => 32,
+                        'maxMessage' => 'Your username can be at maximum 32 characters.'
+                    ]),
                 ],
             ])
             ->add('email', EmailType::class, [
+                'label' => 'Email',
+                'attr' => ['autocomplete' => 'email'],
                 'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Email(),
+                    new NotBlank([
+                        'message' => 'Email is required.',
+                    ]),
+                    new Email([
+                        'message' => 'Please enter a valid email address.',
+                    ]),
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'You should agree to our terms',
                     ]),
                 ],
             ])
@@ -53,11 +67,11 @@ class RegistrationFormType extends AbstractType
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Please enter a password.',
                     ]),
                     new Length([
                         'min' => 8,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Your password should be at least {{ limit }} characters.',
                         'max' => 128,
                     ]),
                     new Assert\Regex([
