@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     profile_pictures_directory: '%kernel.project_dir%/public/uploads/cover_images'
+    lastfm_api_key: '%env(LASTFM_API_KEY)%'
 
 services:
     # default configuration for services in *this* file
@@ -32,3 +33,13 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
+    App\Twig\AppExtension:
+        tags: [twig.extension]
+
+    App\Command\ImportArtistCommand:
+        public: true
+        tags: ['console.command']
+
+    App\Service\Client\LastFmClient:
+        arguments:
+            $apiKey: '%lastfm_api_key%'

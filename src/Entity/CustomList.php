@@ -30,7 +30,7 @@ class CustomList
     private ?bool $is_public = false;
 
     #[ORM\ManyToOne(inversedBy: 'custom_lists')]
-    private ?User $user_id = null;
+    private ?User $user = null;
 
     /**
      * @var Collection<int, CustomListItem>
@@ -84,14 +84,14 @@ class CustomList
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?User $user_id): static
+    public function setUser(?User $user): static
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }

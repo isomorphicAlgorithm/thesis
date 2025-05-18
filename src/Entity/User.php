@@ -16,7 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[UniqueEntity(fields: ['username'], message: 'This username is already taken.')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\HasLifecycleCallbacks]
 
@@ -59,19 +58,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     /**
      * @var Collection<int, Rating>
      */
-    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'user_id')]
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'user')]
     private Collection $ratings;
 
     /**
      * @var Collection<int, Favorite>
      */
-    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'user_id')]
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'user')]
     private Collection $favorites;
 
     /**
      * @var Collection<int, CustomList>
      */
-    #[ORM\OneToMany(targetEntity: CustomList::class, mappedBy: 'user_id')]
+    #[ORM\OneToMany(targetEntity: CustomList::class, mappedBy: 'user')]
     private Collection $custom_lists;
 
     public function __construct()
@@ -90,7 +89,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     {
         $roles = $this->roles;
 
-        // Guarantee every user has at least ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -110,12 +108,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
 
     public function getUserIdentifier(): string
     {
-        return $this->email; // or username depending on your logic
+        return $this->email;
     }
 
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
     }
 
     public function isVerified(): bool
@@ -229,7 +226,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     {
         if (!$this->ratings->contains($rating)) {
             $this->ratings->add($rating);
-            $rating->setUserId($this);
+            $rating->setUser($this);
         }
 
         return $this;
@@ -238,9 +235,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     public function removeRating(Rating $rating): static
     {
         if ($this->ratings->removeElement($rating)) {
-            // set the owning side to null (unless already changed)
-            if ($rating->getUserId() === $this) {
-                $rating->setUserId(null);
+            if ($rating->getUser() === $this) {
+                $rating->setUser(null);
             }
         }
 
@@ -259,7 +255,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     {
         if (!$this->favorites->contains($favorite)) {
             $this->favorites->add($favorite);
-            $favorite->setUserId($this);
+            $favorite->setUser($this);
         }
 
         return $this;
@@ -268,9 +264,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     public function removeFavorite(Favorite $favorite): static
     {
         if ($this->favorites->removeElement($favorite)) {
-            // set the owning side to null (unless already changed)
-            if ($favorite->getUserId() === $this) {
-                $favorite->setUserId(null);
+            if ($favorite->getUser() === $this) {
+                $favorite->setUser(null);
             }
         }
 
@@ -289,7 +284,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     {
         if (!$this->custom_lists->contains($customList)) {
             $this->custom_lists->add($customList);
-            $customList->setUserId($this);
+            $customList->setUser($this);
         }
 
         return $this;
@@ -298,9 +293,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     public function removeCustomList(CustomList $customList): static
     {
         if ($this->custom_lists->removeElement($customList)) {
-            // set the owning side to null (unless already changed)
-            if ($customList->getUserId() === $this) {
-                $customList->setUserId(null);
+            if ($customList->getUser() === $this) {
+                $customList->setUser(null);
             }
         }
 

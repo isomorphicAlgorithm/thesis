@@ -45,6 +45,9 @@ class Song implements SlugSourceInterface
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
+    #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
+    private ?string $musicBrainzId = null;
+
     /**
      * @var Collection<int, Band>
      */
@@ -193,6 +196,16 @@ class Song implements SlugSourceInterface
     public function setSlug(string $slug): void
     {
         $this->slug = $slug;
+    }
+
+    public function getMusicBrainzId(): ?string
+    {
+        return $this->musicBrainzId;
+    }
+
+    public function setMusicBrainzId(?string $musicBrainzId): void
+    {
+        $this->musicBrainzId = $musicBrainzId;
     }
 
     /**
