@@ -6,6 +6,8 @@
 parameters:
     profile_pictures_directory: '%kernel.project_dir%/public/uploads/cover_images'
     lastfm_api_key: '%env(LASTFM_API_KEY)%'
+    spotify.client_id: '%env(SPOTIFY_CLIENT_ID)%'
+    spotify.client_secret: '%env(SPOTIFY_CLIENT_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -34,6 +36,8 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
     App\Twig\AppExtension:
+        arguments:
+            $publicPath: '%kernel.project_dir%/public'
         tags: [twig.extension]
 
     App\Command\ImportArtistCommand:
@@ -43,3 +47,8 @@ services:
     App\Service\Client\LastFmClient:
         arguments:
             $apiKey: '%lastfm_api_key%'
+
+    App\Service\SpotifyService:
+        arguments:
+            $clientId: '%spotify.client_id%'
+            $clientSecret: '%spotify.client_secret%'

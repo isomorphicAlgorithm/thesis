@@ -29,9 +29,9 @@ class UpdateSlugsCommand extends Command
         $entities = [
             User::class,
             Band::class,
-            //Musician::class,
-            //Album::class,
-            //Song::class,
+            Musician::class,
+            Album::class,
+            Song::class,
         ];
 
         foreach ($entities as $entityClass) {

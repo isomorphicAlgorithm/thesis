@@ -6,6 +6,25 @@ class MusicBrainzClient extends AbstractClient
 {
     private const BASE_URL = 'https://musicbrainz.org/ws/2/';
 
+
+    private function fetch(string $endpoint, array $params = []): ?array
+    {
+        $params = array_merge(['fmt' => 'json'], $params);
+
+        $response = $this->client->request('GET', self::BASE_URL . $endpoint, [
+            'query' => $params,
+            'headers' => [
+                'User-Agent' => 'Bandito/1.0 (banditosecure@gmail.com)',
+            ],
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            return null;
+        }
+
+        return $response->toArray(false);
+    }
+
     // Search artists by name
     public function searchArtist(string $name, int $limit = 5): array
     {
@@ -27,14 +46,14 @@ class MusicBrainzClient extends AbstractClient
         return $data['artists'] ?? [];
     }
 
-    // Get artist details by MBID, including releases (albums)
-    public function getArtistDetails(string $mbid, int $releaseLimit = 10): array
+    // Get artist details by MBID, including releases (albums), including relations (musicians)
+    public function getArtistDetails(string $mbid, int $releaseLimit, string $inc): array
     {
         $url = self::BASE_URL . 'artist/' . $mbid;
 
         $query = http_build_query([
             'fmt' => 'json',
-            'inc' => 'releases',  // include releases
+            'inc' => $inc,
             'limit' => $releaseLimit,
         ]);
 
@@ -45,6 +64,32 @@ class MusicBrainzClient extends AbstractClient
         }
 
         return $response->toArray();
+    }
+
+    /**
+     * Get detailed release info by MBID (including relations)
+     */
+    public function getReleaseDetails(string $mbid): array
+    {
+        $url = self::BASE_URL . "release/$mbid?inc=artist-credits+labels+recordings+url-rels&fmt=json";
+
+        $response = $this->client->request('GET', $url);
+        $data = $response->toArray();
+
+        return $data;
+    }
+
+    /**
+     * Get detailed recording info by MBID (including relations)
+     */
+    public function getRecordingDetails(string $mbid): array
+    {
+        $url = self::BASE_URL . "recording/$mbid?inc=artists+releases+url-rels&fmt=json";
+
+        $response = $this->client->request('GET', $url);
+        $data = $response->toArray();
+
+        return $data;
     }
 
     // Get recordings (songs) for a release (album) by release MBID
