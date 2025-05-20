@@ -32,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
     private array $roles = [];
 
     #[ORM\Column(type: 'boolean')]
-    private bool $isVerified = false;
+    private bool $is_verified = false;
 
     #[ORM\Column(length: 32)]
     private ?string $username = null;
@@ -111,18 +111,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
         return $this->email;
     }
 
-    public function eraseCredentials(): void
-    {
-    }
+    public function eraseCredentials(): void {}
 
     public function isVerified(): bool
     {
-        return $this->isVerified;
+        return $this->is_verified;
     }
 
     public function setIsVerified(bool $isVerified): static
     {
-        $this->isVerified = $isVerified;
+        $this->is_verified = $isVerified;
 
         return $this;
     }

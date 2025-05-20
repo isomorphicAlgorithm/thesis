@@ -42,6 +42,15 @@ class Musician implements SlugSourceInterface
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
     private ?string $spotify_id = null;
 
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeImmutable $active_from = null;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeImmutable $active_until = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_disbanded = false;
+
     /**
      * @var Collection<int, Band>
      */
@@ -174,6 +183,42 @@ class Musician implements SlugSourceInterface
     public function setSpotifyId(?string $spotifyId): void
     {
         $this->spotify_id = $spotifyId;
+    }
+
+    public function getActiveFrom(): ?\DateTimeImmutable
+    {
+        return $this->active_from;
+    }
+
+    public function setActiveFrom(?\DateTimeImmutable $activeFrom): static
+    {
+        $this->active_from = $activeFrom;
+
+        return $this;
+    }
+
+    public function getActiveUntil(): ?\DateTimeImmutable
+    {
+        return $this->active_until;
+    }
+
+    public function setActiveUntil(?\DateTimeImmutable $activeUntil): static
+    {
+        $this->active_until = $activeUntil;
+
+        return $this;
+    }
+
+    public function isDisbanded(): bool
+    {
+        return $this->is_disbanded;
+    }
+
+    public function setIsDisbanded(bool $isDisbanded): static
+    {
+        $this->is_disbanded = $isDisbanded;
+
+        return $this;
     }
 
     /**
