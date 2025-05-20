@@ -27,9 +27,6 @@ class Song implements SlugSourceInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $release_date = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private ?array $genres = null;
-
     #[ORM\Column(nullable: true)]
     private ?int $duration = null;
 
@@ -84,6 +81,12 @@ class Song implements SlugSourceInterface
     #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'songs')]
     private Collection $media;
 
+    /**
+     * @var Collection<int, Genre>
+     */
+    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'songs')]
+    private Collection $genres;
+
     public function __construct()
     {
         $this->bands = new ArrayCollection();
@@ -92,6 +95,7 @@ class Song implements SlugSourceInterface
         $this->favorites = new ArrayCollection();
         $this->custom_list_items = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,18 +123,6 @@ class Song implements SlugSourceInterface
     public function setReleaseDate(?\DateTimeImmutable $releaseDate): static
     {
         $this->release_date = $releaseDate;
-
-        return $this;
-    }
-
-    public function getGenres(): ?array
-    {
-        return $this->genres;
-    }
-
-    public function setGenres(?array $genres): static
-    {
-        $this->genres = $genres;
 
         return $this;
     }
@@ -356,6 +348,33 @@ class Song implements SlugSourceInterface
     {
         if ($this->media->removeElement($medium)) {
             $medium->removeSong($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Genre>
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): static
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres->add($genre);
+            $genre->addSong($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): static
+    {
+        if ($this->genres->removeElement($genre)) {
+            $genre->removeSong($this);
         }
 
         return $this;

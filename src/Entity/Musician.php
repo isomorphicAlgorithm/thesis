@@ -72,6 +72,12 @@ class Musician implements SlugSourceInterface
     #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'musicians')]
     private Collection $media;
 
+    /**
+     * @var Collection<int, Genre>
+     */
+    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'musicians')]
+    private Collection $genres;
+
     public function __construct()
     {
         $this->bands = new ArrayCollection();
@@ -79,6 +85,7 @@ class Musician implements SlugSourceInterface
         $this->songs = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -170,7 +177,7 @@ class Musician implements SlugSourceInterface
     }
 
     /**
-     * @return Collection<int, Bands>
+     * @return Collection<int, Band>
      */
     public function getBands(): Collection
     {
@@ -181,6 +188,7 @@ class Musician implements SlugSourceInterface
     {
         if (!$this->bands->contains($band)) {
             $this->bands->add($band);
+            $band->addMusician($this);
         }
 
         return $this;
@@ -188,7 +196,9 @@ class Musician implements SlugSourceInterface
 
     public function removeBand(Band $band): static
     {
-        $this->bands->removeElement($band);
+        if ($this->bands->removeElement($band)) {
+            $band->removeMusician($this);
+        }
 
         return $this;
     }
@@ -296,6 +306,33 @@ class Musician implements SlugSourceInterface
     {
         if ($this->media->removeElement($medium)) {
             $medium->removeMusician($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Genre>
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): static
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres->add($genre);
+            $genre->addMusician($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): static
+    {
+        if ($this->genres->removeElement($genre)) {
+            $genre->removeMusician($this);
         }
 
         return $this;

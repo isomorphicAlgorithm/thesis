@@ -72,6 +72,12 @@ class Band implements SlugSourceInterface
     #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'bands')]
     private Collection $media;
 
+    /**
+     * @var Collection<int, Genre>
+     */
+    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'bands')]
+    private Collection $genres;
+
     public function __construct()
     {
         $this->musicians = new ArrayCollection();
@@ -79,6 +85,7 @@ class Band implements SlugSourceInterface
         $this->songs = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -299,6 +306,33 @@ class Band implements SlugSourceInterface
     {
         if ($this->media->removeElement($medium)) {
             $medium->removeBand($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Genre>
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): static
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres->add($genre);
+            $genre->addBand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): static
+    {
+        if ($this->genres->removeElement($genre)) {
+            $genre->removeBand($this);
         }
 
         return $this;
