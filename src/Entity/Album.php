@@ -27,8 +27,8 @@ class Album implements SlugSourceInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $release_date = null;
 
-    #[ORM\Column(length: 128, nullable: true)]
-    private ?string $genre = null;
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $genres = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $duration = null; //seconds
@@ -123,14 +123,14 @@ class Album implements SlugSourceInterface
         return $this;
     }
 
-    public function getGenre(): ?string
+    public function getGenres(): ?array
     {
-        return $this->genre;
+        return $this->genres;
     }
 
-    public function setGenre(?string $genre): static
+    public function setGenres(?array $genres): static
     {
-        $this->genre = $genre;
+        $this->genres = $genres;
 
         return $this;
     }

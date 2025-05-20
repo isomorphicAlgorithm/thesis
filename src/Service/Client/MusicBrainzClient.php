@@ -6,7 +6,6 @@ class MusicBrainzClient extends AbstractClient
 {
     private const BASE_URL = 'https://musicbrainz.org/ws/2/';
 
-
     private function fetch(string $endpoint, array $params = []): ?array
     {
         $params = array_merge(['fmt' => 'json'], $params);
@@ -67,18 +66,41 @@ class MusicBrainzClient extends AbstractClient
     }
 
     /**
-     * Get detailed release info by MBID (including relations)
+     * Get release group for type = album
      */
-    public function getReleaseDetails(string $mbid): array
+    public function getReleaseGroups(string $mbid): array
     {
-        $url = self::BASE_URL . "release/$mbid?inc=artist-credits+labels+recordings+url-rels&fmt=json";
+        $url = self::BASE_URL . "release-group";
 
-        $response = $this->client->request('GET', $url);
+        $query = http_build_query([
+            'fmt' => 'json',
+            'type' => 'album',
+            'artist' => $mbid,
+        ]);
+
+        $response = $this->client->request('GET', $url . '?' . $query);
         $data = $response->toArray();
 
         return $data;
     }
 
+    /**
+     * Get release group for type = album
+     */
+    public function getReleaseGroupDetails(string $mbid): array
+    {
+        $url = self::BASE_URL . "release-group/" . $mbid;
+
+        $query = http_build_query([
+            'fmt' => 'json',
+            'inc' => 'url-rels'
+        ]);
+
+        $response = $this->client->request('GET', $url . '?' . $query);
+        $data = $response->toArray();
+
+        return $data;
+    }
     /**
      * Get detailed recording info by MBID (including relations)
      */

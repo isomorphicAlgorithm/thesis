@@ -11,7 +11,7 @@
         <!-- Band Cover Image -->
         <div>
             {% if band.coverImage %}
-                <img src="{{ asset('uploads/bands/' ~ band.coverImage) }}" alt="{{ band.name }}" class="w-full md:w-72 h-auto rounded-xl object-cover border-2 border-yellow-500 shadow-md">
+                <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}" alt="{{ band.name }}" class="w-full md:w-72 h-auto rounded-xl object-cover border-2 border-yellow-500 shadow-md">
             {% else %}
                 <div class="w-full md:w-72 h-40 rounded-xl bg-gray-700 flex items-center justify-center text-gray-300 text-xl transition-transform duration-300 hover:scale-[1.01] shadow-lg shadow-yellow-500/10">
                     No Cover Image
@@ -39,7 +39,9 @@
                     </svg>
                     About
                 </h2>
-                <p class="text-gray-300 mt-2 leading-relaxed">{{ band.bio ?: 'No bio provided yet.' }}</p>
+                <div class="text-gray-300 mt-2 leading-relaxed [&_a]:text-blue-500 [&_a]:hover:underline [&_a]:focus:outline-none [&_a]:focus:ring-2 [&_a]:transition">
+                    {{ band.bio|raw ?: 'No bio provided yet.' }}
+                </div>
             </div>
         </div>
     </div>
@@ -67,7 +69,7 @@
             <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {% for album in band.albums %}
                     <li class="bg-gray-800 p-3 rounded">
-                        <a href="{{ path('album_show', { id: album.id }) }}" class="hover:underline text-yellow-400">
+                        <a href="{{ path('album_show', { id: album.id, slug: album.slug }) }}" class="hover:underline text-yellow-400">
                             {{ album.title }}
                         </a>
                     </li>
@@ -95,7 +97,7 @@
 
                         <div class="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg">
                             <img
-                                src="{{ asset('uploads/musicians/' ~ musician.coverImage) }}"
+                                src="{% if file_exists_in_public('uploads/musicians/' ~ musician.coverImage) %}{{ asset('uploads/musicians/' ~ musician.coverImage) }}{% else %}{{ musician.coverImage }}{% endif %}"
                                 alt="{{ musician.name }}"
                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                             >

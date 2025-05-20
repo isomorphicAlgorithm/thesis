@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Musicians | Bandito {% endblock %}
+
+{% block body %}
+<div class="max-w-screen-xl mx-auto px-4 py-6 text-yellow-50">
+    <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
+
+        <!-- Sidebar -->
+        <form method="get" class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border border-yellow-500">
+            <h2 class="text-xl font-bold text-yellow-50 mb-2 flex items-center ">
+                <!-- Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M2.25 4.5A.75.75 0 0 1 3 3.75h14.25a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1-.75-.75Zm0 4.5A.75.75 0 0 1 3 8.25h9.75a.75.75 0 0 1 0 1.5H3A.75.75 0 0 1 2.25 9Zm15-.75A.75.75 0 0 1 18 9v10.19l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 1 1 1.06-1.06l2.47 2.47V9a.75.75 0 0 1 .75-.75Zm-15 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                </svg>
+                Filter
+            </h2>
+
+            <div>
+                <label for="type" class="text-sm font-medium text-yellow-400">Musician Type</label>
+                <select id="type" name="type" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
+                    <option value="" {% if not app.request.get('type') %}selected{% endif %}>All</option>
+                    <option value="solo" {% if app.request.get('type') == 'solo' %}selected{% endif %}>Solo</option>
+                    <option value="band" {% if app.request.get('type') == 'band' %}selected{% endif %}>In a Band</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="sort" class="text-sm font-medium text-yellow-400">Sort by</label>
+                <select id="sort" name="sort" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
+                    <option value="name" {% if app.request.get('sort') == 'name' %}selected{% endif %}>Name</option>
+                    <option value="created" {% if app.request.get('sort') == 'created' %}selected{% endif %}>Recently Added</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="order" class="text-sm font-medium text-yellow-400">Order</label>
+                <select id="order" name="order" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
+                    <option value="asc" {% if app.request.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if app.request.get('order') == 'desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+
+            <button type="submit" class="cursor-pointer bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded w-full transition">
+                Apply Filters
+            </button>
+        </form>
+
+        <!-- Musicians List -->
+        <div class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border border-yellow-500">
+
+            <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-yellow-400">
+                    <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
+                    <path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
+                </svg>
+                All Musicians
+            </h1>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for musician in pagination %}
+                    <a href="{{ path('musician_show', { id: musician.id, slug: musician.slug }) }}"
+                    class="group bg-yellow-600/10 hover:custom-glow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                        <img src="{% if file_exists_in_public('uploads/musicians/' ~ musician.coverImage) %}{{ asset('uploads/musicians/' ~ musician.coverImage) }}{% else %}{{ musician.coverImage }}{% endif %}"
+                            alt="{{ musician.name }}"
+                            class="h-48 w-full object-cover" />
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold text-yellow-50 group-hover:text-yellow-400 transition-colors">
+                                {{ musician.name }}
+                            </h2>
+                        </div>
+                    </a>
+                {% else %}
+                    <p class="text-gray-400">No musicians found.</p>
+                {% endfor %}
+            </div>
+
+            {# Pagination #}
+            {#{% if pagination.pageCount > 1 %}#}
+                <div class="mt-10 flex justify-center">
+                    <nav class="inline-flex rounded-md shadow-sm isolate" aria-label="Pagination">
+
+                        {# Prev Button #}
+                        {% if pagination.currentPageNumber > 1 %}
+                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.currentPageNumber - 1})) }}"
+                            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 rounded-l-md border border-zinc-700">
+                                « Prev
+                            </a>
+                        {% else %}
+                            <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-zinc-500 bg-zinc-900 border border-zinc-700 rounded-l-md cursor-not-allowed">
+                                « Prev
+                            </span>
+                        {% endif %}
+
+                        {# Page Numbers #}
+                        {% for i in 1..pagination.pageCount %}
+                            {% if i == pagination.currentPageNumber %}
+                                <span class="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-black bg-yellow-500 border border-yellow-400">
+                                    {{ i }}
+                                </span>
+                            {% else %}
+                                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: i})) }}"
+                                class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700">
+                                    {{ i }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Next Button #}
+                        {% if pagination.currentPageNumber < pagination.pageCount %}
+                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.currentPageNumber + 1})) }}"
+                            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 rounded-r-md border border-zinc-700">
+                                Next »
+                            </a>
+                        {% else %}
+                            <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-zinc-500 bg-zinc-900 border border-zinc-700 rounded-r-md cursor-not-allowed">
+                                Next »
+                            </span>
+                        {% endif %}
+                    </nav>
+                </div>
+            {#{% endif %}#}
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

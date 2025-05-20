@@ -48,7 +48,7 @@ services:
         arguments:
             $apiKey: '%lastfm_api_key%'
 
-    App\Service\SpotifyService:
+    App\Service\Spotify\SpotifyTokenProvider:
         arguments:
             $clientId: '%spotify.client_id%'
             $clientSecret: '%spotify.client_secret%'
