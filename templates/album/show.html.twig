@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ album.title }} | Bandito {% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-12 text-yellow-50 space-y-10 px-4">
+    <!-- Album Info + Ratings Container -->
+    <div class="flex flex-col lg:flex-row gap-6">
+
+        <!-- Album Info Card -->
+        <div class="flex flex-col md:flex-row gap-6 items-start bg-black/70 p-5 rounded-xl border-2 border-yellow-500/60">
+            <!-- Album Cover -->
+            <img src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}{{ asset('uploads/albums/' ~ album.coverImage) }}{% else %}{{ album.coverImage }}{% endif %}"
+                alt="{{ album.title }}"
+                class="w-75 h-75 object-cover rounded-xl shadow-xl border-2 border-yellow-500/60">
+
+            <!-- Album Info -->
+            <div class="flex-1 space-y-4">
+                <div class="flex-1 min-w-[38rem]">
+                    <h1 class="text-5xl font-extrabold leading-tight break-words">{{ album.title }}</h1>
+                </div>
+                <!-- Bands -->
+                <div class="flex flex-wrap items-center gap-3">
+                    {% for band in album.bands %}
+                        <a href="{{ path('band_show', {id: band.id, slug: band.slug}) }}"
+                        class="text-yellow-300 hover:underline font-semibold flex items-center gap-2">
+                            <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}"
+                                alt="{{ band.name }}"
+                                class="w-18 h-18 rounded-full border-2 border-yellow-500/60 hover:custom-glow">
+                            {{ band.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Metadata -->
+                <div class="text-m text-yellow-50 space-y-1">
+                    <p>About: <span class="text-yellow-300 font-normal leading-relaxed [&_a]:text-blue-500 [&_a]:hover:underline">{{ album.description|raw ?: 'No description provided.' }}</span></p>
+                    <p>Released: <span class="text-yellow-300 font-normal">{{ album.releaseDate|date('F Y') }}</span></p>
+                    <p>Genres: <span class="text-yellow-300 font-normal">{% if album.genres|length > 0 %}{% for genre in album.genres %} {{ genre.displayName }}{% if not loop.last %}, {% endif %} {% endfor %}</span></p>{% else %} - {% endif %}
+                    <p>Duration: <span class="text-yellow-300 font-normal">{{ album.duration|duration_format }}</span></p>
+                    {% if album.links %}
+                        <div>
+                            <h2 class="text-lg font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+                                <i class="fas fa-link text-yellow-400"></i> Links
+                            </h2>
+                            <div class="flex flex-wrap gap-4 items-center">
+                                {% include 'partials/_social_links.html.twig' with { links: album.links } %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Ratings Card -->
+        <div class="w-full lg:w-140 bg-black/70 p-5 rounded-xl border-2 border-yellow-500/60 flex flex-col justify-between">
+            {% set score = album.averageRating|default('N/A') %}
+            {% set color = 'bg-red-500' %}
+            {% if score >= 75 %}
+                {% set color = 'bg-green-500' %}
+            {% elseif score >= 50 %}
+                {% set color = 'bg-yellow-400' %}
+            {% endif %}
+
+            <!-- Average Rating -->
+            <div class="flex flex-col items-center text-center space-y-2">
+                <div class="w-20 h-20 rounded-full flex items-center justify-center font-bold text-yellow-50 {{ color }}">
+                    {{ score }}
+                </div>
+                <span class="text-sm text-yellow-50">Average Rating (out of 100)</span>
+            </div>
+
+            <!-- Your Rating -->
+            {% if app.user %}
+            <div class="mt-2 text-center">
+                <p class="text-yellow-300 text-2xl font-semibold mb-3">Your Rating</p>
+                <form action="{{ path('album_show', {id: album.id, slug: album.slug}) }}" method="post" id="ratingForm">
+                    <input type="hidden" name="rating" id="ratingInput" value="{{ userRating|default(50) }}">
+                    <div id="rating-slider" data-initial-rating="{{ userRating|default(50) }}">
+                        <svg viewBox="0 0 100 100" class="mx-auto w-17 h-17">
+                            <circle class="slider-bg" cx="50" cy="50" r="45" />
+                            <path id="arc" class="slider-arc" />
+                            <circle id="knob" class="slider-knob" cx="50" cy="5" r="6" />
+                        </svg>
+                        <div id="rating-value" class="mt-1 text-sm font-semibold text-yellow-100">50</div>
+                    </div>
+                    <button type="submit" class="mt-2 bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300 font-semibold cursor-pointer">Rate</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tracklist -->
+    <div class="bg-black/70 p-6 rounded-xl border-2 border-yellow-500/60 shadow-md">
+        <h2 class="text-xl font-bold text-yellow-300 mb-4">Tracklist</h2>
+
+        {% if album.songs|length > 0 %}
+            <ul class="space-y-2">
+                {% for song in album.songs %}
+                    <li class="flex justify-between items-center bg-zinc-800 p-3 rounded hover:bg-zinc-700 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="text-yellow-400 font-mono">{{ loop.index }}.</span>
+                            <span class="text-white">{{ song.title }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-yellow-50">
+                            {% if song.duration %}
+                                <span>{{ song.duration }}</span>
+                            {% endif %}
+                            <i class="fas fa-play hover:text-yellow-400 cursor-pointer"></i>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-yellow-50">No tracks available for this album.</p>
+        {% endif %}
+    </div>
+
+    <!-- Reviews -->
+    <div class="bg-black/70 p-6 rounded-xl border-2 border-yellow-500/60 shadow-md">
+        <h2 class="text-xl font-bold text-yellow-300 mb-4">Reviews</h2>
+
+        {% if app.user %}
+            <form action="{{ path('album_show', {id: album.id, slug: album.slug }) }}" method="post" class="mb-4">
+                <textarea name="review" rows="3" class="w-full p-3 bg-yellow-50 text-black/70 rounded text-sm" placeholder="Write your review..." required></textarea>
+                <button type="submit" class="mt-2 bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300 text-sm font-semibold cursor-pointer">Post Review</button>
+            </form>
+        {% endif %}
+
+        <div class="max-h-60 overflow-y-auto space-y-4">
+            {% for rating in album.ratings %}
+                {% if rating.review != null %}
+                    <div class="border-b border-zinc-700 pb-2">
+                        <div class="text-sm text-yellow-200 font-semibold">{{ review.user.username }}</div>
+                        <div class="text-xs text-yellow-50">{{ review.createdAt|date('M d, Y') }}</div>
+                        <div class="text-sm mt-1 text-yellow-50">{{ review.content|default('No review yet') }}</div>
+                    </div>
+                {% else %}
+                    <p class="text-yellow-50">No reviews yet.</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

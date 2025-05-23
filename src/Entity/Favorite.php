@@ -25,7 +25,7 @@ class Favorite
     /**
      * @var Collection<int, Song>
      */
-    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'favorites')]
+    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'favorites')]
     private Collection $songs;
 
     public function __construct()

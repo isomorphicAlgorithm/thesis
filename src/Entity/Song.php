@@ -48,43 +48,46 @@ class Song implements SlugSourceInterface
     /**
      * @var Collection<int, Band>
      */
-    #[ORM\ManyToMany(targetEntity: Band::class, inversedBy: 'songs')]
+    #[ORM\ManyToMany(targetEntity: Band::class, mappedBy: 'songs')]
     private Collection $bands;
 
     /**
      * @var Collection<int, Musician>
      */
-    #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'songs')]
+    #[ORM\ManyToMany(targetEntity: Musician::class, mappedBy: 'songs')]
     private Collection $musicians;
 
     /**
      * @var Collection<int, Album>
      */
-    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'songs')]
+    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'songs')]
     private Collection $albums;
 
     /**
      * @var Collection<int, Favorite>
      */
-    #[ORM\ManyToMany(targetEntity: Favorite::class, mappedBy: 'songs')]
+    #[ORM\ManyToMany(targetEntity: Favorite::class, inversedBy: 'songs')]
+    #[ORM\JoinTable(name: 'song_favorite')]
     private Collection $favorites;
 
     /**
      * @var Collection<int, CustomListItem>
      */
     #[ORM\ManyToMany(targetEntity: CustomListItem::class, mappedBy: 'songs')]
-    private Collection $custom_list_items;
+    private Collection $customListItems;
 
     /**
-     * @var Collection<int, Media>
+     * @var Collection<int, Medium>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'songs')]
+    #[ORM\ManyToMany(targetEntity: Medium::class, inversedBy: 'songs')]
+    #[ORM\JoinTable(name: 'song_medium')]
     private Collection $media;
 
     /**
      * @var Collection<int, Genre>
      */
-    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'songs')]
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'songs')]
+    #[ORM\JoinTable(name: 'song_genre')]
     private Collection $genres;
 
     public function __construct()
@@ -93,7 +96,7 @@ class Song implements SlugSourceInterface
         $this->musicians = new ArrayCollection();
         $this->albums = new ArrayCollection();
         $this->favorites = new ArrayCollection();
-        $this->custom_list_items = new ArrayCollection();
+        $this->customListItems = new ArrayCollection();
         $this->media = new ArrayCollection();
         $this->genres = new ArrayCollection();
     }
@@ -304,13 +307,13 @@ class Song implements SlugSourceInterface
      */
     public function getCustomListItems(): Collection
     {
-        return $this->custom_list_items;
+        return $this->customListItems;
     }
 
     public function addCustomListItem(CustomListItem $customListItem): static
     {
-        if (!$this->custom_list_items->contains($customListItem)) {
-            $this->custom_list_items->add($customListItem);
+        if (!$this->customListItems->contains($customListItem)) {
+            $this->customListItems->add($customListItem);
             $customListItem->addSong($this);
         }
 
@@ -319,7 +322,7 @@ class Song implements SlugSourceInterface
 
     public function removeCustomListItem(CustomListItem $customListItem): static
     {
-        if ($this->custom_list_items->removeElement($customListItem)) {
+        if ($this->customListItems->removeElement($customListItem)) {
             $customListItem->removeSong($this);
         }
 
@@ -327,14 +330,14 @@ class Song implements SlugSourceInterface
     }
 
     /**
-     * @return Collection<int, Media>
+     * @return Collection<int, Medium>
      */
     public function getMedia(): Collection
     {
         return $this->media;
     }
 
-    public function addMedium(Media $medium): static
+    public function addMedium(Medium $medium): static
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
@@ -344,7 +347,7 @@ class Song implements SlugSourceInterface
         return $this;
     }
 
-    public function removeMedium(Media $medium): static
+    public function removeMedium(Medium $medium): static
     {
         if ($this->media->removeElement($medium)) {
             $medium->removeSong($this);

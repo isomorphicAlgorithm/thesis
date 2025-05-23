@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Band;
 use App\Entity\Musician;
 use App\Form\MusicianType;
+use App\Repository\BandRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -66,13 +68,13 @@ class MusicianController extends AbstractController
     }
 
     #[Route('/', name: 'musician_list')]
-    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator): Response
+    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, BandRepository $bandRepository): Response
     {
         $sort = $request->query->get('sort', 'name');
         $order = $request->query->get('order', 'asc');
         $type = $request->query->get('type');
+        $bandId = $request->query->get('band_id');
 
-        // Only allow expected sort and order values
         $allowedSorts = ['name', 'created'];
         $allowedOrders = ['asc', 'desc'];
 
@@ -85,12 +87,25 @@ class MusicianController extends AbstractController
 
         $qb = $em->getRepository(Musician::class)->createQueryBuilder('m');
 
-        // Filter by type
+        $band = null;
+
         if ($type === 'solo') {
             $qb->leftJoin('m.bands', 'b')
-                ->andWhere('b.id IS NULL');
+            ->andWhere('b.id IS NULL');
         } elseif ($type === 'band') {
-            $qb->innerJoin('m.bands', 'b');
+            $qb->join('m.bands', 'b');
+
+            if ($bandId) {
+                $band = $em->getRepository(Band::class)->findOneBy(['id' => $bandId]);
+
+                $qb->andWhere('b.id = :bandId')
+                ->setParameter('bandId', $bandId);
+            }
+        } elseif ($bandId) {
+            // If type is not specified but band is
+            $qb->join('m.bands', 'b')
+            ->andWhere('b.id = :bandId')
+            ->setParameter('bandId', $bandId);
         }
 
         // Sorting
@@ -103,18 +118,22 @@ class MusicianController extends AbstractController
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            12,
+            15,
             [
                 'sortFieldWhitelist' => [],
                 'defaultSortFieldName' => null,
                 'defaultSortDirection' => null,
-                'sortFieldParameterName' => 'ignore', // prevent KNP from parsing ?sort=
+                'sortFieldParameterName' => 'ignore',
                 'sortDirectionParameterName' => 'ignore',
             ]
         );
 
         return $this->render('musician/list.html.twig', [
+            'band' => $band,
             'pagination' => $pagination,
+            'bands' => $bandRepository->findAll(),
+            'selectedBandId' => $bandId,
+            'selectedType' => $type,
         ]);
     }
 }

@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Media;
+use App\Entity\Medium;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Media>
+ * @extends ServiceEntityRepository<Medium>
  */
-class MediaRepository extends ServiceEntityRepository
+class MediumRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, Medium::class);
     }
 
     //    /**
-    //     * @return Media[] Returns an array of Media objects
+    //     * @return Medium[] Returns an array of Medium objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class MediaRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Media
+    //    public function findOneBySomeField($value): ?Medium
     //    {
     //        return $this->createQueryBuilder('m')
     //            ->andWhere('m.exampleField = :val')

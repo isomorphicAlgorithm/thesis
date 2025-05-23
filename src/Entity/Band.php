@@ -42,10 +42,10 @@ class Band implements SlugSourceInterface
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
     private ?string $spotify_id = null;
 
-    #[ORM\Column(type: 'date', nullable: true)]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $active_from = null;
 
-    #[ORM\Column(type: 'date', nullable: true)]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $active_until = null;
 
     #[ORM\Column(type: 'boolean')]
@@ -54,37 +54,43 @@ class Band implements SlugSourceInterface
     /**
      * @var Collection<int, Musician>
      */
-    #[ORM\ManyToMany(targetEntity: Musician::class, mappedBy: 'bands')]
+    #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'bands')]
+    #[ORM\JoinTable(name: 'band_musician')]
     private Collection $musicians;
 
     /**
      * @var Collection<int, Album>
      */
-    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'bands')]
+    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'bands')]
+    #[ORM\JoinTable(name: 'band_album')]
     private Collection $albums;
 
     /**
      * @var Collection<int, Song>
      */
-    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'bands')]
+    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'bands')]
+    #[ORM\JoinTable(name: 'band_song')]
     private Collection $songs;
 
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'bands')]
+    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'bands')]
+    #[ORM\JoinTable(name: 'band_event')]
     private Collection $events;
 
     /**
-     * @var Collection<int, Media>
+     * @var Collection<int, Medium>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'bands')]
+    #[ORM\ManyToMany(targetEntity: Medium::class, inversedBy: 'bands')]
+    #[ORM\JoinTable(name: 'band_medium')]
     private Collection $media;
 
     /**
      * @var Collection<int, Genre>
      */
-    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'bands')]
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'bands')]
+    #[ORM\JoinTable(name: 'band_genre')]
     private Collection $genres;
 
     public function __construct()
@@ -330,14 +336,14 @@ class Band implements SlugSourceInterface
     }
 
     /**
-     * @return Collection<int, Media>
+     * @return Collection<int, Medium>
      */
     public function getMedia(): Collection
     {
         return $this->media;
     }
 
-    public function addMedium(Media $medium): static
+    public function addMedium(Medium $medium): static
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
@@ -347,7 +353,7 @@ class Band implements SlugSourceInterface
         return $this;
     }
 
-    public function removeMedium(Media $medium): static
+    public function removeMedium(Medium $medium): static
     {
         if ($this->media->removeElement($medium)) {
             $medium->removeBand($this);

@@ -38,19 +38,20 @@ class Event
     /**
      * @var Collection<int, Band>
      */
-    #[ORM\ManyToMany(targetEntity: Band::class, inversedBy: 'events')]
+    #[ORM\ManyToMany(targetEntity: Band::class, mappedBy: 'events')]
     private Collection $bands;
 
     /**
      * @var Collection<int, Musician>
      */
-    #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'events')]
+    #[ORM\ManyToMany(targetEntity: Musician::class, mappedBy: 'events')]
     private Collection $musicians;
 
     /**
-     * @var Collection<int, Media>
+     * @var Collection<int, Medium>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'events')]
+    #[ORM\ManyToMany(targetEntity: Medium::class, inversedBy: 'events')]
+    #[ORM\JoinTable(name: 'event_medium')]
     private Collection $media;
 
     public function __construct()
@@ -174,14 +175,14 @@ class Event
     }
 
     /**
-     * @return Collection<int, Media>
+     * @return Collection<int, Medium>
      */
     public function getMedia(): Collection
     {
         return $this->media;
     }
 
-    public function addMedium(Media $medium): static
+    public function addMedium(Medium $medium): static
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
@@ -191,7 +192,7 @@ class Event
         return $this;
     }
 
-    public function removeMedium(Media $medium): static
+    public function removeMedium(Medium $medium): static
     {
         if ($this->media->removeElement($medium)) {
             $medium->removeEvent($this);

@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\MediaRepository;
+use App\Repository\MediumRepository;
 use App\Entity\Traits\TimestampedEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: MediaRepository::class)]
+#[ORM\Entity(repositoryClass: MediumRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Media
+class Medium
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,31 +25,31 @@ class Media
     /**
      * @var Collection<int, Band>
      */
-    #[ORM\ManyToMany(targetEntity: Band::class, inversedBy: 'media')]
+    #[ORM\ManyToMany(targetEntity: Band::class, mappedBy: 'media')]
     private Collection $bands;
 
     /**
      * @var Collection<int, Musician>
      */
-    #[ORM\ManyToMany(targetEntity: Musician::class, inversedBy: 'media')]
+    #[ORM\ManyToMany(targetEntity: Musician::class, mappedBy: 'media')]
     private Collection $musicians;
 
     /**
      * @var Collection<int, Album>
      */
-    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'media')]
+    #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'media')]
     private Collection $albums;
 
     /**
      * @var Collection<int, Song>
      */
-    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'media')]
+    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'media')]
     private Collection $songs;
 
     /**
      * @var Collection<int, Event>
      */
-    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'media')]
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'media')]
     private Collection $events;
 
     public function __construct()

@@ -29,16 +29,10 @@ class Rating
     #[ORM\ManyToOne(inversedBy: 'ratings')]
     private ?User $user = null;
 
-    /**
-     * @var Collection<int, Album>
-     */
-    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'ratings')]
-    private Collection $albums;
+    #[ORM\ManyToOne(inversedBy: 'ratings')]
+    private ?Album $album = null;
 
-    public function __construct()
-    {
-        $this->albums = new ArrayCollection();
-    }
+    public function __construct() {}
 
     public function getId(): ?int
     {
@@ -69,30 +63,6 @@ class Rating
         return $this;
     }
 
-    /**
-     * @return Collection<int, Album>
-     */
-    public function getAlbums(): Collection
-    {
-        return $this->albums;
-    }
-
-    public function addAlbum(Album $album): static
-    {
-        if (!$this->albums->contains($album)) {
-            $this->albums->add($album);
-        }
-
-        return $this;
-    }
-
-    public function removeAlbum(Album $album): static
-    {
-        $this->albums->removeElement($album);
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -101,6 +71,18 @@ class Rating
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAlbum(): ?Album
+    {
+        return $this->album;
+    }
+
+    public function setAlbum(?Album $album): static
+    {
+        $this->album = $album;
 
         return $this;
     }

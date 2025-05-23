@@ -71,12 +71,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
      * @var Collection<int, CustomList>
      */
     #[ORM\OneToMany(targetEntity: CustomList::class, mappedBy: 'user')]
-    private Collection $custom_lists;
+    private Collection $customLists;
 
     public function __construct()
     {
         $this->favorites = new ArrayCollection();
-        $this->custom_lists = new ArrayCollection();
+        $this->customLists = new ArrayCollection();
         $this->ratings = new ArrayCollection();
     }
 
@@ -275,13 +275,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
      */
     public function getCustomLists(): Collection
     {
-        return $this->custom_lists;
+        return $this->customLists;
     }
 
     public function addCustomList(CustomList $customList): static
     {
-        if (!$this->custom_lists->contains($customList)) {
-            $this->custom_lists->add($customList);
+        if (!$this->customLists->contains($customList)) {
+            $this->customLists->add($customList);
             $customList->setUser($this);
         }
 
@@ -290,7 +290,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSou
 
     public function removeCustomList(CustomList $customList): static
     {
-        if ($this->custom_lists->removeElement($customList)) {
+        if ($this->customLists->removeElement($customList)) {
             if ($customList->getUser() === $this) {
                 $customList->setUser(null);
             }

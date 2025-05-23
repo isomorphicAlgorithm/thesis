@@ -35,12 +35,13 @@ class CustomList
     /**
      * @var Collection<int, CustomListItem>
      */
-    #[ORM\ManyToMany(targetEntity: CustomListItem::class, mappedBy: 'custom_lists')]
-    private Collection $custom_list_items;
+    #[ORM\ManyToMany(targetEntity: CustomListItem::class, inversedBy: 'custom_lists')]
+    #[ORM\JoinTable(name: 'custom_list_custom_list_item')]
+    private Collection $customListItems;
 
     public function __construct()
     {
-        $this->custom_list_items = new ArrayCollection();
+        $this->customListItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,13 +102,13 @@ class CustomList
      */
     public function getCustomListItems(): Collection
     {
-        return $this->custom_list_items;
+        return $this->customListItems;
     }
 
     public function addCustomListItem(CustomListItem $customListItem): static
     {
-        if (!$this->custom_list_items->contains($customListItem)) {
-            $this->custom_list_items->add($customListItem);
+        if (!$this->customListItems->contains($customListItem)) {
+            $this->customListItems->add($customListItem);
             $customListItem->addCustomList($this);
         }
 
@@ -116,7 +117,7 @@ class CustomList
 
     public function removeCustomListItem(CustomListItem $customListItem): static
     {
-        if ($this->custom_list_items->removeElement($customListItem)) {
+        if ($this->customListItems->removeElement($customListItem)) {
             $customListItem->removeCustomList($this);
         }
 

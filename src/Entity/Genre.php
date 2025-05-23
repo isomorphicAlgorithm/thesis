@@ -35,8 +35,9 @@ class Genre
     #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'genres')]
     private Collection $songs;
 
-    public function __construct()
+    public function __construct(string $name)
     {
+        $this->name = strtolower($name);
         $this->bands = new ArrayCollection();
         $this->musicians = new ArrayCollection();
         $this->albums = new ArrayCollection();
@@ -58,6 +59,11 @@ class Genre
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getDisplayName(): string
+    {
+        return ucwords($this->name);
     }
 
     /**

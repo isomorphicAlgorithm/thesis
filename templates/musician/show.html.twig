@@ -3,7 +3,7 @@
 {% block title %} {{ musician.name }} | Bandito {% endblock %}
 
 {% block body %}
-<div class="max-w-5xl mx-auto bg-black/70 text-yellow-50 p-6 rounded-lg border border-yellow-500 space-y-6">
+<div class="max-w-5xl mx-auto bg-black/70 text-yellow-50 p-6 rounded-lg border-2 border-yellow-500/60 space-y-6">
 
     <!-- Musician Header -->
     <div class="flex flex-col md:flex-row gap-6 bg-yellow-600/10 text-yellow-50 p-6 rounded-2xl shadow-lg mb-6">
@@ -28,7 +28,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M6.75 3v1.5m10.5-1.5v1.5M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-8.25a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 10.5v8.25" />
                     </svg>
-                    Last Updated Info {{ musician.createdAt|date('F Y') }}
+                    Years Active: {{ musician.activeFrom|date('F Y') }} - {{ musician.activeUntil|date('F Y') }}
                 </p>
             </div>
 

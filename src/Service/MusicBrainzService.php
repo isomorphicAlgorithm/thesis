@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Service;
+
 use App\Service\Client\AbstractClient;
 
-class MusiBrainService extends AbstractClient {}
+class MusiBrainzService extends AbstractClient {}

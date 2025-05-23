@@ -87,13 +87,13 @@ class MusicBrainzClient extends AbstractClient
     /**
      * Get release group for type = album
      */
-    public function getReleaseGroupDetails(string $mbid): array
+    public function getReleaseGroupDetails(string $mbid, string $inc): array
     {
         $url = self::BASE_URL . "release-group/" . $mbid;
 
         $query = http_build_query([
             'fmt' => 'json',
-            'inc' => 'url-rels'
+            'inc' => $inc
         ]);
 
         $response = $this->client->request('GET', $url . '?' . $query);

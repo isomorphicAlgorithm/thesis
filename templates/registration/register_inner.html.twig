@@ -29,7 +29,7 @@
             <!-- Input -->
 			{{ form_widget(registrationForm.username, {
 				attr: {
-					class: 'pl-10 w-full p-2 border border-yellow-500 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
+					class: 'pl-10 w-full p-2 border-2 border-yellow-500/60 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
 					placeholder: 'Enter a username'
 				}
 			}) }}
@@ -59,7 +59,7 @@
             <!-- Input -->
 			{{ form_widget(registrationForm.email, {
 					attr: {
-						class: 'pl-10 w-full p-2 border border-yellow-500 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
+						class: 'pl-10 w-full p-2 border-2 border-yellow-500/60 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
 						placeholder: 'Enter a valid email'
 					}
 			}) }}
@@ -110,7 +110,7 @@
 			{{ form_widget(registrationForm.plainPassword.first, {
 				attr: {
 					':type': 'show ? "text" : "password"',
-					class: 'pl-10 pr-12 w-full p-2 border border-yellow-500 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
+					class: 'pl-10 pr-12 w-full p-2 border-2 border-yellow-500/60 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
 					placeholder: 'Enter a password'
 				}
 			}) }}
@@ -160,7 +160,7 @@
 			{{ form_widget(registrationForm.plainPassword.second, {
 				attr: {
 					':type': 'show ? "text" : "password"',
-					class: 'pl-10 pr-12 w-full p-2 border border-yellow-500 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
+					class: 'pl-10 pr-12 w-full p-2 border-2 border-yellow-500/60 rounded-md bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-400',
 					placeholder: 'Repeat the password'
 				}
 			}) }}

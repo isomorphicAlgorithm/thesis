@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "round-slider/dist/roundslider.min.css";
+
 main {
     transition: background-color 0.5s ease, color 0.5s ease;
 }
@@ -36,7 +38,59 @@ body.theme-dark {
 }
 
 button:hover {
-    box-shadow: 0 0 10px #facc15; /* Tailwind yellow-400 */
+    box-shadow: 0 0 10px #facc15;
+}
+
+#rating-slider {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    user-select: none;
+    margin: auto;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+#rating-slider svg {
+    width: 100%;
+    height: 100%;
+}
+
+.slider-bg {
+    stroke: #e5e7eb;
+    stroke-width: 8;
+    fill: none;
+}
+
+.slider-arc {
+    fill: none;
+    stroke: rgba(150, 90, 40, 0.8);
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.slider-knob {
+    fill: #facc15;
+    stroke: white;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.slider-knob:active {
+    transform: scale(1.05); /* Subtle */
+}
+
+#rating-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    user-select: none;
 }
 
 @import "tailwindcss/utilities";
