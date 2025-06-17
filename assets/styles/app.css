@@ -41,6 +41,10 @@ button:hover {
     box-shadow: 0 0 10px #facc15;
 }
 
+button.no-glow:hover {
+    box-shadow: none;
+}
+
 #rating-slider {
     width: 100px;
     height: 100px;
@@ -91,6 +95,12 @@ button:hover {
     font-weight: 600;
     color: #1f2937;
     user-select: none;
+}
+
+.arrow-btn {
+  @apply absolute top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow-lg
+         bg-black/60 backdrop-blur-md text-yellow-300 hover:bg-yellow-400 hover:text-black
+         transition-all duration-300 z-10;
 }
 
 @import "tailwindcss/utilities";

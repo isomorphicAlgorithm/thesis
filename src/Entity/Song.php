@@ -39,11 +39,20 @@ class Song implements SlugSourceInterface
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $links = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
     private ?string $spotify_id = null;
+
+    #[ORM\Column]
+    private int $track_number;
+
+    /**
+     * @var Collection<int, Favorite>
+     */
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'song')]
+    private Collection $favorites;
 
     /**
      * @var Collection<int, Band>
@@ -62,13 +71,6 @@ class Song implements SlugSourceInterface
      */
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'songs')]
     private Collection $albums;
-
-    /**
-     * @var Collection<int, Favorite>
-     */
-    #[ORM\ManyToMany(targetEntity: Favorite::class, inversedBy: 'songs')]
-    #[ORM\JoinTable(name: 'song_favorite')]
-    private Collection $favorites;
 
     /**
      * @var Collection<int, CustomListItem>
@@ -92,10 +94,10 @@ class Song implements SlugSourceInterface
 
     public function __construct()
     {
+        $this->favorites = new ArrayCollection();
         $this->bands = new ArrayCollection();
         $this->musicians = new ArrayCollection();
         $this->albums = new ArrayCollection();
-        $this->favorites = new ArrayCollection();
         $this->customListItems = new ArrayCollection();
         $this->media = new ArrayCollection();
         $this->genres = new ArrayCollection();
@@ -203,6 +205,18 @@ class Song implements SlugSourceInterface
         $this->spotify_id = $spotifyId;
     }
 
+    public function getTrackNumber(): int
+    {
+        return $this->track_number;
+    }
+
+    public function setTrackNumber(int $trackNumber): static
+    {
+        $this->track_number = $trackNumber;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Band>
      */
@@ -215,6 +229,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->bands->contains($band)) {
             $this->bands->add($band);
+            $band->addSong($this);
         }
 
         return $this;
@@ -239,6 +254,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->musicians->contains($musician)) {
             $this->musicians->add($musician);
+            $musician->addSong($this); // keep it in sync
         }
 
         return $this;
@@ -263,6 +279,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->albums->contains($album)) {
             $this->albums->add($album);
+            $album->addSong($this);
         }
 
         return $this;
@@ -287,7 +304,7 @@ class Song implements SlugSourceInterface
     {
         if (!$this->favorites->contains($favorite)) {
             $this->favorites->add($favorite);
-            $favorite->addSong($this);
+            $favorite->setSong($this);
         }
 
         return $this;
@@ -296,10 +313,27 @@ class Song implements SlugSourceInterface
     public function removeFavorite(Favorite $favorite): static
     {
         if ($this->favorites->removeElement($favorite)) {
-            $favorite->removeSong($this);
+            if ($favorite->getSong() === $this) {
+                $favorite->setSong(null);
+            }
         }
 
         return $this;
+    }
+
+    public function isFavoritedByUser(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        foreach ($this->favorites as $favorite) {
+            if ($favorite->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -1,31 +1,45 @@
-import './styles/app.css';
+import "./styles/app.css";
 
-import Alpine from 'alpinejs';
-import themeSwitcher from './js/theme';
-import loginForm from './js/login_form';
-import { inlineEditor } from './components/inline-editor.js';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import Alpine from "alpinejs";
+import themeSwitcher from "./js/theme";
+import loginForm from "./js/login_form";
+import {inlineEditor} from "./components/inline-editor.js";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
-import $ from 'jquery';
+import $ from "jquery";
 window.$ = $;
 window.jQuery = $;
 
-import { initRatingSlider } from './js/rating';
+import "./js/review_progress";
+import "./js/review_delete";
+import "./js/reviews";
 
-document.addEventListener('DOMContentLoaded', () => {
-    initRatingSlider();
+import reviewsComponent from "./js/reviews_component";
+
+window.reviewsComponent = reviewsComponent;
+
+import {initRatingSlider} from "./js/rating";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initRatingSlider();
 });
 
-import './js/filters';
-import { initSwiper } from './js/swiper';
+import "./js/filters";
+import {initSwiper} from "./js/swiper";
 
-document.addEventListener('DOMContentLoaded', () => {
-    initSwiper();
+document.addEventListener("DOMContentLoaded", () => {
+  initSwiper();
+});
+
+import {initFavoriteToggle} from "./js/favorite";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initFavoriteToggle();
 });
 
 window.inlineEditor = inlineEditor;
 window.Alpine = Alpine;
-Alpine.data('themeSwitcher', themeSwitcher);
-Alpine.data('loginForm', loginForm);
+Alpine.data("themeSwitcher", themeSwitcher);
+Alpine.data("loginForm", loginForm);
 
 Alpine.start();

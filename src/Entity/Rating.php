@@ -20,7 +20,7 @@ class Rating
 
     use TimestampedEntity;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $rating_score = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -44,7 +44,7 @@ class Rating
         return $this->rating_score;
     }
 
-    public function setRatingScore(int $ratingScore): static
+    public function setRatingScore(?int $ratingScore): static
     {
         $this->rating_score = $ratingScore;
 

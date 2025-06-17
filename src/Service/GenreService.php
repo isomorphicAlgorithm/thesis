@@ -41,23 +41,33 @@ class GenreService extends AbstractClient
         $result = [];
         $seen = [];
 
-        foreach ($names as $name) {
+        // Normalize and filter first
+        $normalizedNames = array_unique(array_filter(array_map(function ($name) {
             $normalized = strtolower(trim($name));
+            return $this->isValidGenre($normalized) ? $normalized : null;
+        }, $names)));
 
-            if (isset($seen[$normalized]) || !$this->isValidGenre($normalized)) {
+        // Load all matching genres at once
+        $existingGenres = $this->genreRepo->findBy(['name' => $normalizedNames]);
+        $existingByName = [];
+
+        foreach ($existingGenres as $genre) {
+            $existingByName[$genre->getName()] = $genre;
+        }
+
+        foreach ($normalizedNames as $normalized) {
+            if (isset($seen[$normalized])) {
                 continue;
             }
-
             $seen[$normalized] = true;
 
-            $genre = $this->genreRepo->findOneBy(['name' => $normalized]);
-
-            if (!$genre) {
+            if (isset($existingByName[$normalized])) {
+                $result[] = $existingByName[$normalized];
+            } else {
                 $genre = new Genre($normalized);
                 $this->em->persist($genre);
+                $result[] = $genre;
             }
-
-            $result[] = $genre;
         }
 
         return $result;

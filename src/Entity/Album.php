@@ -215,6 +215,7 @@ class Album implements SlugSourceInterface
     {
         if (!$this->bands->contains($band)) {
             $this->bands->add($band);
+            $band->addAlbum($this);
         }
 
         return $this;
@@ -239,6 +240,7 @@ class Album implements SlugSourceInterface
     {
         if (!$this->musicians->contains($musician)) {
             $this->musicians->add($musician);
+            $musician->addAlbum($this);
         }
 
         return $this;
@@ -305,6 +307,16 @@ class Album implements SlugSourceInterface
         }
 
         return $this;
+    }
+
+    public function getAverageRating(): ?float
+    {
+        $ratings = $this->ratings->filter(fn($r) => $r->getRatingScore() !== null);
+        if (count($ratings) === 0) {
+            return null;
+        }
+        $sum = array_reduce($ratings->toArray(), fn($carry, $r) => $carry + $r->getRatingScore(), 0);
+        return $sum / count($ratings);
     }
 
     /**
