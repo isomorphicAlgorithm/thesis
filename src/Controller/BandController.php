@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Band;
+use App\Entity\Genre;
 use App\Form\BandType;
+use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +34,7 @@ class BandController extends AbstractController
             'band' => $band,
         ]);
     }
-
+    /*
     #[Route('/{id}/edit', name: 'band_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Band $band, EntityManagerInterface $em): Response
     {
@@ -66,12 +68,13 @@ class BandController extends AbstractController
 
         return $this->redirectToRoute('homepage');
     }
-
+*/
     #[Route('/', name: 'band_list')]
-    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator): Response
+    public function list(Request $request, GenreRepository $genreRepository, EntityManagerInterface $em, PaginatorInterface $paginator): Response
     {
         $sort = $request->query->get('sort', 'name');
         $order = $request->query->get('order', 'asc');
+        $genreId = $request->query->get('genre_id');
 
         // Validate sort and order values
         $allowedSorts = ['name', 'created'];
@@ -97,6 +100,15 @@ class BandController extends AbstractController
                 break;
         }
 
+        $genre = null;
+
+        if ($genreId) {
+            $genre = $em->getRepository(Genre::class)->find($genreId);
+            $qb->join('b.genres', 'g')
+                ->andWhere('g.id = :genreId')
+                ->setParameter('genreId', $genreId);
+        }
+
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -112,6 +124,10 @@ class BandController extends AbstractController
 
         return $this->render('band/list.html.twig', [
             'pagination' => $pagination,
+            'genre' => $genre,
+            'genres' => $genreRepository->findAll(),
+            'selectedGenreId' => $genreId,
+            'totalBands' =>  $pagination->getTotalItemCount(),
         ]);
     }
 }

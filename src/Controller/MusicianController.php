@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Band;
+use App\Entity\Genre;
 use App\Entity\Musician;
 use App\Form\MusicianType;
 use App\Repository\BandRepository;
+use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +34,7 @@ class MusicianController extends AbstractController
             'musician' => $musician,
         ]);
     }
-
+    /*
     #[Route('/{id}/edit', name: 'musician_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Musician $musician, EntityManagerInterface $em): Response
     {
@@ -66,14 +68,15 @@ class MusicianController extends AbstractController
 
         return $this->redirectToRoute('homepage');
     }
-
+*/
     #[Route('/', name: 'musician_list')]
-    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, BandRepository $bandRepository): Response
+    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, BandRepository $bandRepository, GenreRepository $genreRepository): Response
     {
         $sort = $request->query->get('sort', 'name');
         $order = $request->query->get('order', 'asc');
         $type = $request->query->get('type');
         $bandId = $request->query->get('band_id');
+        $genreId = $request->query->get('genre_id');
 
         $allowedSorts = ['name', 'created'];
         $allowedOrders = ['asc', 'desc'];
@@ -91,7 +94,7 @@ class MusicianController extends AbstractController
 
         if ($type === 'solo') {
             $qb->leftJoin('m.bands', 'b')
-            ->andWhere('b.id IS NULL');
+                ->andWhere('b.id IS NULL');
         } elseif ($type === 'band') {
             $qb->join('m.bands', 'b');
 
@@ -99,13 +102,22 @@ class MusicianController extends AbstractController
                 $band = $em->getRepository(Band::class)->findOneBy(['id' => $bandId]);
 
                 $qb->andWhere('b.id = :bandId')
-                ->setParameter('bandId', $bandId);
+                    ->setParameter('bandId', $bandId);
             }
         } elseif ($bandId) {
             // If type is not specified but band is
             $qb->join('m.bands', 'b')
-            ->andWhere('b.id = :bandId')
-            ->setParameter('bandId', $bandId);
+                ->andWhere('b.id = :bandId')
+                ->setParameter('bandId', $bandId);
+        }
+
+        $genre = null;
+
+        if ($genreId) {
+            $genre = $em->getRepository(Genre::class)->find($genreId);
+            $qb->join('m.genres', 'g')
+                ->andWhere('g.id = :genreId')
+                ->setParameter('genreId', $genreId);
         }
 
         // Sorting
@@ -132,8 +144,12 @@ class MusicianController extends AbstractController
             'band' => $band,
             'pagination' => $pagination,
             'bands' => $bandRepository->findAll(),
+            'genre' => $genre,
+            'genres' => $genreRepository->findAll(),
             'selectedBandId' => $bandId,
             'selectedType' => $type,
+            'selectedGenreId' => $genreId,
+            'totalMusicians' =>  $pagination->getTotalItemCount(),
         ]);
     }
 }

@@ -66,11 +66,11 @@ class LastFmClient extends AbstractClient
         ])['album'] ?? null;
     }
 
-    public function getTrackInfo(string $mbid, string $trackTitle): ?array
+    public function getTrackInfo(string $name, string $trackTitle): ?array
     {
         return $this->fetch([
             'method' => 'track.getinfo',
-            'mbid' => $mbid,
+            'artist' => $name,
             'track' => $trackTitle,
         ])['track'] ?? null;
     }

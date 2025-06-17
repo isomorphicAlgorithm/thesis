@@ -85,7 +85,7 @@ class MusicBrainzClient extends AbstractClient
     }
 
     /**
-     * Get release group for type = album
+     * Get release group details for type = album
      */
     public function getReleaseGroupDetails(string $mbid, string $inc): array
     {
@@ -101,6 +101,43 @@ class MusicBrainzClient extends AbstractClient
 
         return $data;
     }
+
+    /**
+     * Get release recordings
+     */
+    public function getReleaseRecordings(string $mbid, string $inc): array
+    {
+        $url = self::BASE_URL . "release/" . $mbid;
+
+        $query = http_build_query([
+            'fmt' => 'json',
+            'inc' => $inc
+        ]);
+
+        $response = $this->client->request('GET', $url . '?' . $query);
+        $data = $response->toArray();
+
+        return $data;
+    }
+
+    /**
+     * Get release recording details
+     */
+    public function getReleaseRecordingDetails(string $mbid, string $inc): array
+    {
+        $url = self::BASE_URL . "recording/" . $mbid;
+
+        $query = http_build_query([
+            'fmt' => 'json',
+            'inc' => $inc
+        ]);
+
+        $response = $this->client->request('GET', $url . '?' . $query);
+        $data = $response->toArray();
+
+        return $data;
+    }
+
     /**
      * Get detailed recording info by MBID (including relations)
      */

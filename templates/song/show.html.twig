@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ song.title }} | Bandito{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto mt-10 text-white">
+    <div class="grid grid-cols-3 gap-6 border-2 border-yellow-500/60 rounded-2xl p-6 bg-black/70">
+        <!-- Cover and Meta -->
+        <div class="md:col-span-1 space-y-4">
+            <img src="{% if file_exists_in_public('uploads/songs/' ~ song.coverImage) %}{{ asset('uploads/songs/' ~ song.coverImage) }}{% else %}{{ song.coverImage }}{% endif %}" alt="{{ song.title }}" class="rounded-xl border-2 border-yellow-500/60 max-h-[300px] object-cover mx-auto">
+
+            <ul class="text-sm text-zinc-300 space-y-1">
+                {% if song.releaseDate %}<li><strong class="text-yellow-400">Released:</strong> {{ song.releaseDate|date('F Y') }}</li>{% endif %}
+                {% if song.duration %}<li><strong class="text-yellow-400">Duration:</strong> {{ song.duration|duration_format }}</li>{% endif %}
+                {% if song.genres|length > 0 %}<li><strong class="text-yellow-400">Genres:</strong> {{ song.genres|map(g => g.displayName)|join(', ') }}</li>{% endif %}
+            </ul>
+
+            {% if song.links %}
+            <div class="mt-4">
+                <h2 class="text-md font-semibold text-yellow-300 mb-2">Listen:</h2>
+                <div class="flex flex-wrap gap-3">
+                    {% include 'partials/_social_links.html.twig' with { links: song.links } %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Song Info -->
+        <div class="md:col-span-2 space-y-6">
+            <div class="flex items-start justify-between gap-4 mt-1">
+                <h1 class="text-4xl text-yellow-50 font-bold">{{ song.title }}</h1>
+
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-3 mt-2">
+                        {% if app.user %}
+                            <button
+                                class="favorite-btn text-red-500 hover:text-red-400 no-glow rounded-xl transition focus:outline-none cursor-pointer"
+                                data-song-id="{{ song.id }}"
+                                data-csrf-token="{{ csrf_token('favorite' ~ song.id) }}"
+                                aria-pressed="{{ isFavorite ? 'true' : 'false' }}"
+                                title="{{ isFavorite ? 'Remove from favorites' : 'Add to favorites' }}"
+                            >
+                                <!-- Filled Heart -->
+                                <svg
+                                    class="heart-icon h-10 w-10 fill-current {% if not isFavorite %}hidden{% endif %}"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                                            2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                                            C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                                            c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+
+                                <!-- Outline Heart -->
+                                <svg
+                                    class="heart-icon h-10 w-10 stroke-current {% if isFavorite %}hidden{% endif %}"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21.35l-1.45-1.32
+                                            C5.4 15.36 2 12.28 2 8.5
+                                            2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                                            C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                                            c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+
+                            <span class="favorite-text text-red-500 font-bold text-m">
+                                {{ isFavorite ? 'Favorited' : 'Add to Favorites' }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% if favoriteCount > 0 %}
+                        <span class="text-sm text-zinc-400">
+                            {{ favoriteCount }} {{ favoriteCount == 1 ? 'user has' : 'users have' }} favorited this
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if song.bands|length > 0 %}
+            <div class="flex flex-wrap items-center gap-3">
+                {% for band in song.bands %}
+                <a href="{{ path('band_show', {id: band.id, slug: band.slug}) }}" class="text-yellow-300 hover:underline font-semibold flex items-center gap-2">
+                    <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}" alt="{{ band.name }}" class="w-16 h-16 rounded-full border-2 border-yellow-500/60 hover:custom-glow">
+                    <span>{{ band.name }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if song.musicians|length > 0 %}
+            <div>
+                <h2 class="text-xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-yellow-400">
+                        <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+                    </svg>
+                    Featuring:
+                </h2>
+                <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                    {% for musician in song.musicians %}
+                    <div class="text-center">
+                        <a href="{{ path('musician_show', { id: musician.id, slug: musician.slug }) }}" class="block w-20 h-20 mx-auto rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg hover:custom-glow transition-transform hover:scale-110">
+                            <img src="{% if file_exists_in_public('uploads/musicians/' ~ musician.coverImage) %}{{ asset('uploads/musicians/' ~ musician.coverImage) }}{% else %}{{ musician.coverImage }}{% endif %}" alt="{{ musician.name }}" class="w-full h-full object-cover">
+                        </a>
+                        <p class="text-yellow-50 font-semibold mt-2 text-base hover:text-yellow-400 transition-colors">{{ musician.name }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if song.description %}
+                <p class="text-base text-gray-300 leading-relaxed [&_a]:text-blue-500 [&_a]:hover:underline max-w-2xl">{{ song.description|raw ?: 'No description provided yet.' }}</p>
+            {% endif %}
+
+            {% if song.albums|length > 0 %}
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xl font-bold text-yellow-50 flex items-center gap-2">
+                        <svg class="text-yellow-400 size-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="8" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        Albums
+                    </h2>
+
+                    {% if song.albums|length > 4 %}
+                    <div class="flex items-center gap-2">
+                        <a href="{{ path('album_list', { song_id: song.id }) }}" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition hover:custom-glow">View All Albums</a>
+                        <span class="text-sm text-yellow-300 bg-yellow-600/10 px-3 py-1 rounded-full border border-yellow-500/60">
+                            +{{ song.albums|length - 4 }} more
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        {% for album in song.albums|slice(0, 4) %}
+                        <div class="swiper-slide rounded-xl p-2">
+                            <a href="{{ path('album_show', { id: album.id, slug: album.slug }) }}" class="hover:bg-yellow-500/20 block transform hover:scale-105 bg-black/70 transition duration-300 rounded-xl p-2">
+                                <img src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}{{ asset('uploads/albums/' ~ album.coverImage) }}{% else %}{{ album.coverImage }}{% endif %}" class="rounded-lg w-full h-48 object-cover" alt="{{ album.title }}">
+                                <p class="text-white text-center mt-2 font-semibold text-yellow-50">{{ album.title }}</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

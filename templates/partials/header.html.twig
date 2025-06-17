@@ -1,4 +1,4 @@
-<header class="bg-black/70 text-yellow-50 flex items-center justify-between px-4 py-2 shadow">
+<header class="sticky top-0 z-50 bg-black/70 backdrop-blur-md text-yellow-50 flex items-center justify-between px-4 py-2 shadow">
 
     <div class="flex items-center space-x-2">
         <a href="{{ path('homepage') }}">
@@ -6,6 +6,9 @@
         </a>
         <span class="text-2xl font-bold ml-4">BANDITO</span>
     </div>
+
+    {% include 'partials/header/search_bar.html.twig' %}
+
 
     <div class="flex items-center space-x-4" x-cloak x-data="{ dropdownOpen: false }">
 

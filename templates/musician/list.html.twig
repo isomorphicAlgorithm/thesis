@@ -17,8 +17,34 @@
             </h2>
 
             <div>
+                <label for="sort" class="text-sm font-medium text-yellow-400">Sort by</label>
+                <select id="sort" name="sort" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
+                    <option value="name" {% if app.request.get('sort') == 'name' %}selected{% endif %}>Name</option>
+                    <option value="created" {% if app.request.get('sort') == 'created' %}selected{% endif %}>Recently Added</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="order" class="text-sm font-medium text-yellow-400">Order</label>
+                <select id="order" name="order" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
+                    <option value="asc" {% if app.request.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if app.request.get('order') == 'desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="genre_id" class="text-sm font-medium text-yellow-400">Genre</label>
+                <select id="genre_id" name="genre_id" class="t-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
+                    <option value="">All Genres</option>
+                    {% for genre in genres %}
+                        <option value="{{ genre.id }}" {% if selectedGenreId == genre.id %}selected{% endif %}>{{ genre.displayName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
                 <label for="type" class="text-sm font-medium text-yellow-400">Musician Type</label>
-                <select id="type" name="type" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
+                <select id="type" name="type" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
                     <option value="" {% if not app.request.get('type') %}selected{% endif %}>All</option>
                     <option value="solo" {% if app.request.get('type') == 'solo' %}selected{% endif %}>Solo</option>
                     <option value="band" {% if app.request.get('type') == 'band' %}selected{% endif %}>In a Band</option>
@@ -27,27 +53,11 @@
 
             <div>
                 <label for="band_id" class="text-sm font-medium text-yellow-400">Band</label>
-                <select id="band_id" name="band_id" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
+                <select id="band_id" name="band_id" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500  cursor-pointer">
                     <option value="" {% if not selectedBandId %}selected{% endif %}>All Bands</option>
                     {% for band in bands %}
                         <option value="{{ band.id }}" {% if selectedBandId == band.id %}selected{% endif %}>{{ band.name }}</option>
                     {% endfor %}
-                </select>
-            </div>
-
-            <div>
-                <label for="sort" class="text-sm font-medium text-yellow-400">Sort by</label>
-                <select id="sort" name="sort" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
-                    <option value="name" {% if app.request.get('sort') == 'name' %}selected{% endif %}>Name</option>
-                    <option value="created" {% if app.request.get('sort') == 'created' %}selected{% endif %}>Recently Added</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="order" class="text-sm font-medium text-yellow-400">Order</label>
-                <select id="order" name="order" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500">
-                    <option value="asc" {% if app.request.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
-                    <option value="desc" {% if app.request.get('order') == 'desc' %}selected{% endif %}>Descending</option>
                 </select>
             </div>
 
@@ -68,6 +78,12 @@
                 {% if band %}
                     - <span class="text-yellow-400">{{ band.name }}</span>
                 {% endif %}
+                {% if  genre %}
+                    - <span class="text-yellow-400">{{ genre.displayName }}</span>
+                {% endif %}
+                <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total musicians matching filters">
+                    {{ totalMusicians }} musicians
+                </span>
             </h1>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
@@ -88,48 +104,8 @@
                 {% endfor %}
             </div>
 
-            {# Pagination #}
-            {% set pageCount = pagination.pageCount > 0 ? pagination.pageCount : 1 %}
-            <div class="mt-10 flex justify-center">
-                <nav class="inline-flex rounded-md shadow-sm isolate" aria-label="Pagination">
-                    {# Prev Button #}
-                    {% if pagination.currentPageNumber > 1 %}
-                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.currentPageNumber - 1})) }}"
-                        class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 rounded-l-md border border-zinc-700">
-                            « Prev
-                        </a>
-                    {% else %}
-                        <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-zinc-500 bg-zinc-900 border border-zinc-700 rounded-l-md cursor-not-allowed">
-                            « Prev
-                        </span>
-                    {% endif %}
-
-                    {% for i in 1..pageCount %}
-                        {% if i == pagination.currentPageNumber %}
-                            <span class="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-black bg-yellow-500 border border-yellow-400">
-                                {{ i }}
-                            </span>
-                        {% else %}
-                            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: i})) }}"
-                            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700">
-                                {{ i }}
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-
-                    {# Next Button #}
-                    {% if pagination.currentPageNumber < pagination.pageCount %}
-                        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.currentPageNumber + 1})) }}"
-                        class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 rounded-r-md border border-zinc-700">
-                            Next »
-                        </a>
-                    {% else %}
-                        <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-zinc-500 bg-zinc-900 border border-zinc-700 rounded-r-md cursor-not-allowed">
-                            Next »
-                        </span>
-                    {% endif %}
-                </nav>
-            </div>
+            <!-- Pagination -->
+            {% include 'components/pagination.html.twig' %}
 
         </div>
 
