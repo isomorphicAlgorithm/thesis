@@ -41,6 +41,21 @@ button:hover {
     box-shadow: 0 0 10px #facc15;
 }
 
+.custom-shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  transition-property: box-shadow;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* On hover, shadow changes to yellow-500 colored shadow */
+.custom-shadow:hover {
+  /* Tailwind yellow-500 = #f59e0b */
+  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.5),
+              0 4px 6px -4px rgba(245, 158, 11, 0.3);
+}
+
 button.no-glow:hover {
     box-shadow: none;
 }

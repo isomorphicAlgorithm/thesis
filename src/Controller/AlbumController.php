@@ -139,11 +139,21 @@ class AlbumController extends AbstractController
         $visibleReviews = array_slice($filtered, 0, 4);
         $additionalCount = max(count($filtered) - 4, 0);
 
+        $ratingScores = $em->createQueryBuilder()
+            ->select('r')
+            ->from(Rating::class, 'r')
+            ->where('r.album = :album')
+            ->andWhere('r.rating_score IS NOT NULL')
+            ->setParameter('album', $album)
+            ->getQuery()
+            ->getResult();
+
         return $this->render('album/show.html.twig', [
             'album' => $album,
             'userRating' => $userRating,
             'userReview' => $userReview,
             'ratings' => $allRatings,
+            'ratingScores' => $ratingScores,
             'existingRating' => $existingRating,
             'visibleReviews' => $visibleReviews,
             'additionalReviewCount' => $additionalCount,

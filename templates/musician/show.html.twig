@@ -86,24 +86,17 @@
                 Albums
             </h2>
 
-            {% if musician.albums|length > 4 %}
-                <div class="flex items-center gap-2">
-                    <a href="{{ path('album_list', { musician_id: musician.id }) }}"
-                        class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition hover:custom-glow">
-                        View All Albums
-                    </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ path('album_list', { musician_id: musician.id }) }}"
+                    class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition custom-shadow">
+                    View All Albums
+                </a>
+                {% if musician.albums|length > 4 %}
                     <span class="text-sm text-yellow-300 bg-yellow-600/10 px-3 py-1 rounded-full border border-yellow-500">
                         +{{ musician.albums|length - 4 }} more
                     </span>
-                </div>
-            {% else %}
-                <div class="flex items-center gap-2">
-                    <a href="{{ path('album_list', { musician_id: musician.id }) }}"
-                        class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition hover:custom-glow">
-                        View All Albums
-                    </a>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
 
         {% if musician.albums|length > 0 %}
@@ -142,7 +135,7 @@
             <div class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {% for band in musician.bands %}
                     <a href="{{ path('band_show', { id: band.id, slug: band.slug }) }}"
-                    class="group hover:custom-glow bg-yellow-600/10 backdrop-blur-lg p-6 rounded-2xl text-center hover:shadow-2xl transition-transform hover:-translate-y-2 border border-white/10">
+                    class="group custom-shadow bg-yellow-600/10 backdrop-blur-lg p-6 rounded-2xl text-center hover:shadow-2xl transition-transform hover:-translate-y-2 border border-white/10">
 
                         <div class="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg">
                             <img

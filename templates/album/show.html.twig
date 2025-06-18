@@ -25,7 +25,7 @@
                        class="text-yellow-300 hover:underline font-semibold flex items-center gap-2">
                         <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}"
                              alt="{{ band.name }}"
-                             class="w-14 h-14 rounded-full border-2 border-yellow-500/60 hover:custom-glow">
+                             class="w-14 h-14 rounded-full border-2 border-yellow-500/60 custom-shadow">
                         <span>{{ band.name }}</span>
                     </a>
                 {% endfor %}
@@ -68,10 +68,15 @@
             {% endif %}
 
             <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-black/70 {{ averageScoreColor }}">
+                <div class="w-15 h-15 rounded-full flex items-center justify-center font-bold text-black/70 {{ averageScoreColor }}">
                     {{ averageScore }}
                 </div>
-                <span class="text-sm text-yellow-500/60">Average Rating (out of 100)</span>
+                <span class="text-b text-yellow-500/60">Average Rating (out of 100)</span>
+                {% if ratingScores|length > 0 %}
+                    <span class="text-sm text-zinc-400">
+                        {{ ratingScores|length }} {{ ratingScores|length == 1 ? 'user has' : 'users have' }} rated this
+                    </span>
+                {% endif %}
             </div>
 
             {% set userScore = userRating|default('N/A') %}
@@ -113,7 +118,7 @@
                     <form action="{{ path('album_delete_score', {albumId: album.id, id: existingRating.id}) }}" method="post" onsubmit="return confirm('Delete your rating?');" class="inline-block mt-2">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete-rating-score' ~ existingRating.id) }}">
                         <button type="submit"
-                                class="bg-red-600 hover:custom-glow text-white px-2 py-2 rounded text-sm font-semibold cursor-pointer"
+                                class="bg-red-600 custom-shadow text-white px-2 py-2 rounded text-sm font-semibold cursor-pointer"
                                 title="Delete your rating score">
                             Delete Rating
                         </button>
@@ -138,7 +143,7 @@
 
     <!-- Tracklist -->
     <div class="bg-black/70 p-6 rounded-xl border-2 border-yellow-500/60 shadow-md">
-        <h2 class="text-xl font-bold flex items-center text-yellow-300 gap-3 mb-6">
+        <h2 class="text-xl font-bold flex items-center text-yellow-50 gap-3 mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" stroke-width="2" class="size-6 text-yellow-400">
                 <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd"/>
             </svg>
@@ -173,9 +178,9 @@
 
     <!-- Reviews -->
     <div class="bg-black/70 p-6 rounded-xl border-2 border-yellow-500/60 shadow-md">
-        <h2 class="text-xl font-bold flex items-center text-yellow-300 gap-3 mb-6">
+        <h2 class="text-xl font-bold flex items-center text-yellow-50 gap-3 mb-6">
             <svg class="size-6 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5v14h14V5H5zm2 4h10M7 12h6"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h6m-2 8 4-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-2 2z"/>
             </svg>
             Reviews
         </h2>
@@ -225,24 +230,17 @@
         <!-- Horizontally scrollable reviews -->
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg text-yellow-300 font-semibold">What others are saying</h3>
-            {% if additionalReviewCount > 0 %}
-                <div class="flex items-center gap-2">
-                    <a href="{{ path('reviews_list', {album: album.id}) }}"
-                        class="bg-yellow-400 hover:bg-yellow-300 text-sm font-semibold text-black py-2 px-4 rounded transition hover:custom-glow">
-                        Show all reviews
-                    </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ path('reviews_list', {album: album.id}) }}"
+                    class="bg-yellow-400 hover:bg-yellow-300 text-sm font-semibold text-black py-2 px-4 rounded transition custom-shadow">
+                    Show all reviews
+                </a>
+                {% if additionalReviewCount > 0 %}
                     <span class="text-sm text-yellow-300 bg-yellow-600/10 px-3 py-1 rounded-full border border-yellow-500">
                         +{{ additionalReviewCount }} more
                     </span>
-                </div>
-            {% else %}
-                <div class="flex items-center gap-2">
-                    <a href="{{ path('reviews_list', {album: album.id}) }}"
-                        class="bg-yellow-400 hover:bg-yellow-300 text-sm font-semibold text-black py-2 px-4 rounded transition hover:custom-glow">
-                        Show all reviews
-                    </a>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
 
         {% if visibleReviews is not empty %}

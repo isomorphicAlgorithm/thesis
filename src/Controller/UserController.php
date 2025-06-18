@@ -42,12 +42,42 @@ class UserController extends AbstractController
         /** @var \App\Entity\User|null $currentUser */
         $currentUser = $security->getUser();
 
+        $ratingScores = [];
+        $reviews = [];
+
+        $ratingScores = $ratingRepository->createQueryBuilder('r')
+            ->where('r.user = :user')
+            ->andWhere('r.rating_score IS NOT NULL')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $reviews = $ratingRepository->createQueryBuilder('r')
+            ->where('r.user = :user')
+            ->andWhere('r.review IS NOT NULL')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $userRatingScores = [];
+        $userReviews = [];
+
+        foreach ($ratingScores as $rating) {
+            if ($rating->getAlbum()) {
+                $userRatingScores[$rating->getAlbum()->getId()] = $rating->getRatingScore();
+            }
+        }
+
+        foreach ($reviews as $review) {
+            if ($review->getAlbum()) {
+                $userReviews[$review->getAlbum()->getId()] = true;
+            }
+        }
+
         // Determine if it's the currently logged-in user's own profile
         $isOwnProfile = $currentUser && $currentUser->getId() == $user->getId();
-
-        // Fetch ratings and favorites
-        $ratings = []; //$ratingRepository->findBy(['user' => $user]);
-        $favorites = []; //$favoriteRepository->findBy(['user' => $user]);
 
         $coverImage = $user->getCoverImage();
         $coverImagePath = 'uploads/cover_images/' . ($coverImage ?: 'default.png');
@@ -66,9 +96,11 @@ class UserController extends AbstractController
 
         return $this->render('user/profile.html.twig', [
             'user' => $user,
+            'ratingScores' => $ratingScores,
+            'reviews' => $reviews,
             'isOwnProfile' => $isOwnProfile,
-            'ratings' => $ratings,
-            'favorites' => $favorites,
+            'userRatingScores' => $userRatingScores,
+            'userReviews' => $userReviews,
             'coverImagePath' => $coverImagePath,
         ]);
     }

@@ -89,7 +89,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
                 {% for musician in pagination %}
                     <a href="{{ path('musician_show', { id: musician.id, slug: musician.slug }) }}"
-                    class="group bg-yellow-600/10 hover:custom-glow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                    class="group bg-yellow-600/10 custom-shadow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
                         <img src="{% if file_exists_in_public('uploads/musicians/' ~ musician.coverImage) %}{{ asset('uploads/musicians/' ~ musician.coverImage) }}{% else %}{{ musician.coverImage }}{% endif %}"
                             alt="{{ musician.name }}"
                             class="h-48 w-full object-cover" />

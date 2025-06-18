@@ -2,7 +2,7 @@
     x-data="inlineEditor('{{ entityType }}', '{{ entityId }}', '{{ field }}', '{{ initialValue|e('js') }}', '{{ path('inline_edit') }}', '{{ csrf_token('inline_edit') }}')"
     class="group"
 >
-    <div x-show="!editing" @click="startEditing" class="cursor-pointer hover:bg-yellow-600/10 transition transition-colors duration-500 rounded-md p-2 hover:custom-glow">
+    <div x-show="!editing" @click="startEditing" class="cursor-pointer hover:bg-yellow-600/10 transition transition-colors duration-500 rounded-md p-2 custom-shadow">
         <span
             :class="value.trim() === '' ? 'italic text-yellow-50' : 'text-yellow-50'"
             class="text-sm"

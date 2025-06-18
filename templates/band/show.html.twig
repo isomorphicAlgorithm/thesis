@@ -87,24 +87,17 @@
                             Albums
                         </h2>
 
-                        {% if band.albums|length > 4 %}
-                            <div class="flex items-center gap-2">
-                                <a href="{{ path('album_list', { band_id: band.id }) }}"
-                                    class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition hover:custom-glow">
-                                    View All Albums
-                                </a>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ path('album_list', { band_id: band.id }) }}"
+                                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition custom-shadow">
+                                View All Albums
+                            </a>
+                            {% if band.albums|length > 4 %}
                                 <span class="text-sm text-yellow-300 bg-yellow-600/10 px-3 py-1 rounded-full border border-yellow-500">
                                     +{{ band.albums|length - 4 }} more
                                 </span>
-                            </div>
-                        {% else %}
-                            <div class="flex items-center gap-2">
-                                <a href="{{ path('album_list', { band_id: band.id }) }}"
-                                    class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-4 rounded transition hover:custom-glow">
-                                    View All Albums
-                                </a>
-                            </div>
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     </div>
 
                     {% if band.albums|length > 0 %}
@@ -143,7 +136,7 @@
                             {% for musician in band.musicians %}
                                 <div class="text-center">
                                     <a href="{{ path('musician_show', { id: musician.id, slug: musician.slug }) }}"
-                                    class="block w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg hover:custom-glow transition-transform hover:scale-110">
+                                    class="block w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg custom-shadow transition-transform hover:scale-110">
                                         <img
                                             src="{% if file_exists_in_public('uploads/musicians/' ~ musician.coverImage) %}{{ asset('uploads/musicians/' ~ musician.coverImage) }}{% else %}{{ musician.coverImage }}{% endif %}"
                                             alt="{{ musician.name }}"
