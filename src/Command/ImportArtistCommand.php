@@ -105,7 +105,7 @@ class ImportArtistCommand extends Command
                     // Setting Spotify Id
                     $band->setSpotifyId($spotifyArtist['id']); // spotify_id
                     // Checking Spotify band images
-                    if ($spotifyArtist['images'][0]['url']) {
+                    if (isset($spotifyArtist['images'][0]['url'])) {
                         $band->setCoverImage($spotifyArtist['images'][0]['url']); // cover_image
                     }
 
@@ -574,7 +574,7 @@ class ImportArtistCommand extends Command
                     // Setting Spotify Id
                     $musician->setSpotifyId($spotifyArtist['id']); // spotify_id
                     // Checking Spotify Musician images
-                    if ($spotifyArtist['images'][0]['url']) {
+                    if (isset($spotifyArtist['images'][0]['url'])) {
                         $musician->setCoverImage($spotifyArtist['images'][0]['url']); // cover_image
                     }
 

@@ -144,12 +144,23 @@
                     </div>
 
                     <div class="swiper mySwiper">
-                        <div class="swiper-wrapper">
+                        <div class="swiper-wrapper flex-nowrap">
                             {% for album in song.albums|slice(0, 4) %}
-                                <div class="swiper-slide rounded-xl p-2">
-                                    <a href="{{ path('album_show', { id: album.id, slug: album.slug }) }}" class="hover:bg-yellow-500/20 block transform hover:scale-105 bg-black/70 transition duration-300 rounded-xl p-2">
-                                        <img src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}{{ asset('uploads/albums/' ~ album.coverImage) }}{% else %}{{ album.coverImage }}{% endif %}" class="rounded-lg w-full h-48 object-cover" alt="{{ album.title }}">
-                                        <p class="text-white text-center mt-2 font-semibold text-yellow-50">{{ album.title }}</p>
+                                <div class="swiper-slide !w-60 flex-shrink-0 rounded-xl p-2">
+                                    <a
+                                        href="{{ path('album_show', { id: album.id, slug: album.slug }) }}"
+                                        class="hover:bg-yellow-500/20 block transform hover:scale-105 bg-black/70 transition duration-300 rounded-xl p-2"
+                                    >
+                                        <img
+                                            src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}
+                                                    {{ asset('uploads/albums/' ~ album.coverImage) }}
+                                                {% else %}
+                                                    {{ album.coverImage }}
+                                                {% endif %}"
+                                            class="rounded-lg w-full h-auto aspect-[4/4] object-cover"
+                                            alt="{{ album.title }}"
+                                        >
+                                        <p class="text-white text-center mt-2 font-semibold">{{ album.title }}</p>
                                     </a>
                                 </div>
                             {% endfor %}

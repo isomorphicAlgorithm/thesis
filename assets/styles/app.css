@@ -33,6 +33,10 @@ body.theme-dark {
     );
 }
 
+.mySwiper .swiper-wrapper {
+  width: calc(4 * 15rem + 3 * 1rem) !important; /* 4 × w-60 + 3 × spaceBetween */
+}
+
 .hover\:custom-glow:hover {
     box-shadow: 0 0 10px #facc15;
 }

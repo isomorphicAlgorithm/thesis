@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 import "./js/filters";
-import {initSwiper} from "./js/swiper";
+import initSwiper from './js/swiper';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   initSwiper();
 });
 
@@ -37,9 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initFavoriteToggle();
 });
 
+import { searchDropdown } from "./js/search_dropdown.js";
+
 window.inlineEditor = inlineEditor;
 window.Alpine = Alpine;
 Alpine.data("themeSwitcher", themeSwitcher);
 Alpine.data("loginForm", loginForm);
+Alpine.data("searchDropdown", searchDropdown);
 
 Alpine.start();
