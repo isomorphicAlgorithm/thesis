@@ -21,7 +21,7 @@ class Album implements SlugSourceInterface
 
     use TimestampedEntity;
 
-    #[ORM\Column(length: 128)]
+    #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     #[ORM\Column(nullable: true)]
