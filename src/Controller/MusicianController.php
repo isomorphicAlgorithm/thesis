@@ -11,6 +11,7 @@ use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,41 +35,7 @@ class MusicianController extends AbstractController
             'musician' => $musician,
         ]);
     }
-    /*
-    #[Route('/{id}/edit', name: 'musician_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Musician $musician, EntityManagerInterface $em): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(MusicianType::class, $musician);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Musician updated successfully.');
-            return $this->redirectToRoute('musician_show', ['id' => $musician->getId()]);
-        }
-
-        return $this->render('musician/edit.html.twig', [
-            'musician' => $musician,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}/delete', name: 'musician_delete', methods: ['POST'])]
-    public function delete(Request $request, Musician $musician, EntityManagerInterface $em): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        if ($this->isCsrfTokenValid('delete' . $musician->getId(), $request->request->get('_token'))) {
-            $em->remove($musician);
-            $em->flush();
-            $this->addFlash('success', 'Musician deleted.');
-        }
-
-        return $this->redirectToRoute('homepage');
-    }
-*/
     #[Route('/', name: 'musician_list')]
     public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, BandRepository $bandRepository, GenreRepository $genreRepository): Response
     {
@@ -151,5 +118,113 @@ class MusicianController extends AbstractController
             'selectedGenreId' => $genreId,
             'totalMusicians' =>  $pagination->getTotalItemCount(),
         ]);
+    }
+
+    #[Route('/create', name: 'musician_create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $em): Response
+    {
+        $musician = new Musician();
+
+        $form = $this->createForm(MusicianType::class, $musician);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('musician_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('musicians_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $musician->setCoverImage($newFilename);
+            }
+
+            $em->persist($musician);
+            $em->flush();
+
+            $this->addFlash('success', 'Musician created successfully');
+
+            return $this->redirectToRoute('musician_show', [
+                'id'   => $musician->getId(),
+                'slug' => $musician->getSlug(),
+            ]);
+        }
+
+        return $this->render('musician/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/edit', name: 'musician_edit', methods: ['GET', 'POST'])]
+    public function edit(Musician $musician, Request $request, EntityManagerInterface $em): Response
+    {
+        // Links handling
+        $rawLinks = $musician->getLinks();
+
+        if (is_array($rawLinks)) {
+            $musician->setLinks(array_values($rawLinks));
+        }
+
+        $form = $this->createForm(MusicianType::class, $musician);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('musician_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('musicians_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $musician->setCoverImage($newFilename);
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Musician updated successfully');
+
+            return $this->redirectToRoute('musician_show', [
+                'id'   => $musician->getId(),
+                'slug' => $musician->getSlug(),
+            ]);
+        }
+
+        return $this->render('musician/edit.html.twig', [
+            'form' => $form->createView(),
+            'musician' => $musician,
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/delete', name: 'musician_delete', methods: ['POST'])]
+    public function delete(Musician $musician, Request $request, EntityManagerInterface $em): Response
+    {
+        if (!$this->isCsrfTokenValid('delete' . $musician->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em->remove($musician);
+        $em->flush();
+
+        $this->addFlash('success', 'Musician deleted');
+
+        return $this->redirectToRoute('musician_list');
     }
 }

@@ -121,8 +121,10 @@ class BandController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile|null $coverFile */
             $coverFile = $form->get('coverImageFile')->getData();
+
             if ($coverFile) {
                 $newFilename = uniqid('band_', true) . '.' . $coverFile->guessExtension();
+
                 try {
                     $coverFile->move(
                         $this->getParameter('bands_covers_directory'),
@@ -131,6 +133,7 @@ class BandController extends AbstractController
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Cover could not be uploaded');
                 }
+
                 $band->setCoverImage($newFilename);
             }
 

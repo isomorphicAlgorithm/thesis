@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit {{ band.name }} | Bandito{% endblock %}
+{% block title %}Edit {{ musician.name }} | Bandito{% endblock %}
 
 {% block body %}
 <div class="min-h-screen bg-cover bg-center py-12">
@@ -8,13 +8,13 @@
         <div class="flex items-center justify-between">
             <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-yellow-400">
-                    <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clip-rule="evenodd" />
-                    <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
+                    <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
+                    <path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
                 </svg>
-                Edit Band -
-                <span class="text-yellow-400">{{ band.name }}</span>
+                Edit Musician -
+                <span class="text-yellow-400">{{ musician.name }}</span>
             </h1>
-            <a href="{{ path('band_list') }}" class="text-yellow-400 hover:text-yellow-300 text-base font-semibold inline-flex items-center gap-2 transition">
+            <a href="{{ path('musician_list') }}" class="text-yellow-400 hover:text-yellow-300 text-base font-semibold inline-flex items-center gap-2 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
@@ -76,10 +76,10 @@
             <hr class="col-span-full border-t border-yellow-500/30 my-4" />
 
             <!-- Current Cover Preview -->
-            {% if band.coverImage %}
+            {% if musician.coverImage %}
                 <div class="col-span-full">
                     <label class="text-yellow-400 font-semibold block mb-1">Current Cover</label>
-                    <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}" alt="Current cover" class="mt-2 w-96 h-96 rounded-xl object-cover border-2 border-yellow-500/60 shadow-md object-cover" />
+                    <img src="{% if file_exists_in_public('uploads/musicians/' ~ musician.coverImage) %}{{ asset('uploads/musicians/' ~ musician.coverImage) }}{% else %}{{ musician.coverImage }}{% endif %}" alt="Current cover" class="mt-2 w-96 h-96 rounded-xl object-cover border-2 border-yellow-500/60 shadow-md object-cover" />
                 </div>
                 <hr class="col-span-full border-t border-yellow-500/30 my-4" />
             {% endif %}
@@ -102,11 +102,11 @@
                 {{ form_errors(form.genres) }}
             </div>
 
-            <!-- Musicians -->
+            <!-- Bands -->
             <div class="col-span-full">
-                {{ form_label(form.musicians, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
-                {{ form_widget(form.musicians, { attr: { class: 'musician-select w-full' } }) }}
-                {{ form_errors(form.musicians) }}
+                {{ form_label(form.bands, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
+                {{ form_widget(form.bands, { attr: { class: 'band-select w-full' } }) }}
+                {{ form_errors(form.bands) }}
             </div>
 
             <!-- Albums -->
@@ -134,7 +134,7 @@
 
             <!-- Submit Buttons -->
             <div class="col-span-full flex justify-end gap-4 mt-4">
-                <a href="{{ path('band_list') }}" class="inline-block px-6 py-2 bg-red-600 rounded-xl text-white custom-shadow hover:text-yellow-400 transition">Cancel</a>
+                <a href="{{ path('musician_list') }}" class="inline-block px-6 py-2 bg-red-600 rounded-xl text-white custom-shadow hover:text-yellow-400 transition">Cancel</a>
                 <button type="submit" class="inline-flex items-center gap-2 bg-yellow-500 text-black font-semibold px-6 py-2 rounded-2xl custom-shadow transition cursor-pointer">Save Changes</button>
             </div>
 
