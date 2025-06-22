@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Album;
 use App\Entity\Band;
 use App\Entity\Genre;
 use App\Entity\Musician;
 use App\Form\MusicianType;
+use App\Repository\AlbumRepository;
 use App\Repository\BandRepository;
 use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,13 +39,14 @@ class MusicianController extends AbstractController
     }
 
     #[Route('/', name: 'musician_list')]
-    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, BandRepository $bandRepository, GenreRepository $genreRepository): Response
+    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, BandRepository $bandRepository, GenreRepository $genreRepository, AlbumRepository $albumRepository): Response
     {
         $sort = $request->query->get('sort', 'name');
         $order = $request->query->get('order', 'asc');
         $type = $request->query->get('type');
         $bandId = $request->query->get('band_id');
         $genreId = $request->query->get('genre_id');
+        $albumId = $request->query->get('album_id');
 
         $allowedSorts = ['name', 'created'];
         $allowedOrders = ['asc', 'desc'];
@@ -94,6 +97,16 @@ class MusicianController extends AbstractController
             $qb->orderBy('m.name', $order);
         }
 
+        $album = null;
+        // Filtering by album
+        if ($albumId) {
+            $album = $em->getRepository(Album::class)->findOneBy(['id' => $albumId]);
+
+            $qb->join('m.albums', 'a')
+                ->andWhere('a.id = :albumId')
+                ->setParameter('albumId', $albumId);
+        }
+
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -109,13 +122,16 @@ class MusicianController extends AbstractController
 
         return $this->render('musician/list.html.twig', [
             'band' => $band,
-            'pagination' => $pagination,
-            'bands' => $bandRepository->findAll(),
+            'album' => $album,
             'genre' => $genre,
+            'bands' => $bandRepository->findAll(),
             'genres' => $genreRepository->findAll(),
+            'albums' => $albumRepository->findAll(),
             'selectedBandId' => $bandId,
+            'selectedAlbumId' => $albumId,
             'selectedType' => $type,
             'selectedGenreId' => $genreId,
+            'pagination' => $pagination,
             'totalMusicians' =>  $pagination->getTotalItemCount(),
         ]);
     }

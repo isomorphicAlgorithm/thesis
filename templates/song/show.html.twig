@@ -11,7 +11,7 @@
 
             <ul class="text-sm text-zinc-300 space-y-1">
                 {% if song.releaseDate %}<li><strong class="text-yellow-400">Released:</strong> {{ song.releaseDate|date('F Y') }}</li>{% endif %}
-                {% if song.duration %}<li><strong class="text-yellow-400">Duration:</strong> {{ song.duration|duration_format }}</li>{% endif %}
+                {% if song.duration %}<li><strong class="text-yellow-400">Duration:</strong>{% if song.duration is not null %}{{ song.duration|duration_format }}{% else %} - {% endif %}</li>{% endif %}
                 {% if song.genres|length > 0 %}<li><strong class="text-yellow-400">Genres:</strong> {{ song.genres|map(g => g.displayName)|join(', ') }}</li>{% endif %}
             </ul>
 

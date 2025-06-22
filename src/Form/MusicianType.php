@@ -145,7 +145,6 @@ class MusicianType extends AbstractType
                     ->createQueryBuilder('a')
                     ->orderBy('a.title', 'ASC'),
             ])
-
             ->add('songs', EntityType::class, [
                 'class'         => Song::class,
                 'choice_label'  => fn(Song $song) => $song->getTitle(),

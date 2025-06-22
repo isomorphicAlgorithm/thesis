@@ -50,7 +50,7 @@
                         {% endfor %}
                     {% else %}-{% endif %}
                 </span></p>
-                <p>Duration: <span class="text-base font-normal leading-relaxed text-yellow-50">{{ album.duration|duration_format }}</span></p>
+                <p>Duration: <span class="text-base font-normal leading-relaxed text-yellow-50">{% if album.duration is not null %}{{ album.duration|duration_format }}{% else %} - {% endif %}</span></p>
             </div>
         </div>
 

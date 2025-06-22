@@ -4,13 +4,13 @@ namespace App\Form;
 
 use App\Entity\Band;
 use App\Entity\Genre;
-use App\Entity\Musician;
 use App\Entity\Album;
+use App\Entity\Musician;
 use App\Entity\Song;
 use App\Repository\GenreRepository;
 use App\Repository\SongRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,17 +23,31 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Regex;
 
-class BandType extends AbstractType
+class AlbumType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'Band Name',
+            ->add('title', TextType::class, [
+                'label' => 'Album Title',
                 'attr' => ['class' => 'form-input']
             ])
-            ->add('bio', TextareaType::class, [
-                'label' => 'Biography',
+            ->add('release_date', DateType::class, [
+                'widget' => 'single_text',
+                'required' => false,
+                'label' => 'Release Date',
+                'html5' => true,
+            ])
+            ->add('duration', IntegerType::class, [
+                'required' => false,
+                'label' => 'Duration (seconds)',
+                'attr' => [
+                    'min' => 1,
+                    'placeholder' => 'e.g. 3600 for 1 hour',
+                ],
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'Description',
                 'required' => false,
                 'attr' => ['class' => 'form-textarea', 'rows' => 5]
             ])
@@ -65,20 +79,6 @@ class BandType extends AbstractType
                 'required' => false,
                 'mapped' => false
             ])
-            ->add('activeFrom', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Active From',
-                'required' => false
-            ])
-            ->add('activeUntil', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Active Until',
-                'required' => false
-            ])
-            ->add('isDisbanded', CheckboxType::class, [
-                'label' => 'Is Disbanded',
-                'required' => false
-            ])
             ->add('genres', EntityType::class, [
                 'class' => Genre::class,
                 'label' => 'Genres',
@@ -94,11 +94,38 @@ class BandType extends AbstractType
                         ->orderBy('g.name', 'ASC');
                 },
             ])
+            ->add('bands', EntityType::class, [
+                'class'        => Band::class,
+                'choice_label' => 'name',
+                'multiple'     => true,
+                'required'     => false,
+                'attr'         => [
+                    'class' => 'band-select',
+                ],
+                'by_reference' => false,
+                'choice_attr'  => function (Band $b) {
+                    $raw = $b->getCoverImage();
+                    if ($raw && preg_match('/^https?:\/\//', $raw)) {
+                        $coverUrl = $raw;
+                    } else {
+                        $coverUrl = $raw
+                            ? '/uploads/bands/' . $raw
+                            : '/uploads/bands/default.png';
+                    }
+                    return [
+                        'data-cover' => $coverUrl,
+                    ];
+                },
+                'query_builder' => fn($repo) => $repo
+                    ->createQueryBuilder('b')
+                    ->orderBy('b.name', 'ASC'),
+            ])
             ->add('musicians', EntityType::class, [
                 'class'        => Musician::class,
                 'choice_label' => 'name',
                 'multiple'     => true,
                 'required'     => false,
+                'by_reference' => false,
                 'attr'         => [
                     'class' => 'musician-select',
                 ],
@@ -119,31 +146,6 @@ class BandType extends AbstractType
                     ->createQueryBuilder('m')
                     ->orderBy('m.name', 'ASC'),
             ])
-            ->add('albums', EntityType::class, [
-                'class'        => Album::class,
-                'choice_label' => 'title',
-                'multiple'     => true,
-                'required'     => false,
-                'attr'         => [
-                    'class' => 'album-select',
-                ],
-                'choice_attr'  => function (Album $a) {
-                    $raw = $a->getCoverImage();
-                    if ($raw && preg_match('/^https?:\/\//', $raw)) {
-                        $coverUrl = $raw;
-                    } else {
-                        $coverUrl = $raw
-                            ? '/uploads/albums/' . $raw
-                            : '/uploads/albums/default.png';
-                    }
-                    return [
-                        'data-cover' => $coverUrl,
-                    ];
-                },
-                'query_builder' => fn($repo) => $repo
-                    ->createQueryBuilder('a')
-                    ->orderBy('a.title', 'ASC'),
-            ])
             ->add('songs', EntityType::class, [
                 'class'         => Song::class,
                 'choice_label'  => fn(Song $song) => $song->getTitle(),
@@ -163,8 +165,7 @@ class BandType extends AbstractType
     {
 
         $resolver->setDefaults([
-            'data_class' => Band::class,
-            //'song_choices' => [],
+            'data_class' => Album::class,
         ]);
     }
 }

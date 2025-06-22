@@ -83,67 +83,99 @@
         <!-- Albums List -->
         <div class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border-2 border-yellow-500/60">
 
-            <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
-                <svg class="size-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></svg>
-                Explore Albums
-                {% if band %}
-                    - <span class="text-yellow-400">{{ band.name }}</span>
-                {% endif %}
-                {% if musician %}
-                    - <span class="text-yellow-400">{{ musician.name }}</span>
-                {% endif %}
-                {% if  genre %}
-                    - <span class="text-yellow-400">{{ genre.displayName }}</span>
-                {% endif %}
-                <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total albums matching filters">
-                    {{ totalAlbums }} albums
-                </span>
-            </h1>
+            <div class="flex items-center mb-6">
+                <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
+                    <svg class="size-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></svg>
+                    Explore Albums
+                    {% if band %}
+                        - <span class="text-yellow-400">{{ band.name }}</span>
+                    {% endif %}
+                    {% if musician %}
+                        - <span class="text-yellow-400">{{ musician.name }}</span>
+                    {% endif %}
+                    {% if  genre %}
+                        - <span class="text-yellow-400">{{ genre.displayName }}</span>
+                    {% endif %}
+                </h1>
+
+                <div class="ml-auto flex items-center gap-4">
+                    {% if app.user and is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('album_create') }}"
+                            class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded custom-shadow transition">
+                            + New Album
+                        </a>
+                    {% endif %}
+
+                    <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total albums matching filters">
+                        {{ totalAlbums }} albums
+                    </span>
+                </div>
+            </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-6 gap-4">
                 {% for album in pagination %}
-                <a href="{{ path('album_show', { id: album.id, slug: album.slug }) }}" class="group relative bg-yellow-600/10 custom-shadow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
-                    <!-- Album Cover -->
-                    <img src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}{{ asset('uploads/albums/' ~ album.coverImage) }}{% else %}{{ album.coverImage }}{% endif %}"
-                        alt="{{ album.title }}"
-                        class="w-full h-28 object-cover" />
+                    <div class="relative group">
+                        <a href="{{ path('album_show', { id: album.id, slug: album.slug }) }}" class="block relative bg-yellow-600/10 custom-shadow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                            <!-- Album Cover -->
+                            <img src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}{{ asset('uploads/albums/' ~ album.coverImage) }}{% else %}{{ album.coverImage }}{% endif %}"
+                                alt="{{ album.title }}"
+                                class="w-full h-28 object-cover" />
 
-                    <!-- Text info -->
-                    <div class="p-3">
-                        <h2 class="text-sm font-semibold text-yellow-50 group-hover:text-yellow-400 transition-colors truncate">
-                            {{ album.title }}
-                        </h2>
+                            <!-- Text info -->
+                            <div class="p-3">
+                                <h2 class="text-sm font-semibold text-yellow-50 group-hover:text-yellow-400 transition-colors truncate">
+                                    {{ album.title }}
+                                </h2>
 
-                        <div class="flex items-center gap-1 mt-1">
-                            <!-- Average Rating Badge -->
-                            {% set avgRating = album.averageRating|default(null) %}
-                            {% if avgRating %}
-                                {% set avgColor = avgRating >= 75 ? 'bg-green-500' : (avgRating >= 50 ? 'bg-yellow-500' : 'bg-red-500') %}
-                                <span class="text-xs text-black font-bold px-1.5 py-0.5 rounded {{ avgColor }}" title="Average rating">
-                                    {{ avgRating|round }}
-                                </span>
-                            {% endif %}
+                                <div class="flex items-center gap-1 mt-1">
+                                    <!-- Average Rating Badge -->
+                                    {% set avgRating = album.averageRating|default(null) %}
+                                    {% if avgRating %}
+                                        {% set avgColor = avgRating >= 75 ? 'bg-green-500' : (avgRating >= 50 ? 'bg-yellow-500' : 'bg-red-500') %}
+                                        <span class="text-xs text-black font-bold px-1.5 py-0.5 rounded {{ avgColor }}" title="Average rating">
+                                            {{ avgRating|round }}
+                                        </span>
+                                    {% endif %}
 
-                            <!-- User Rating Badge (if exists) -->
-                            {% if userRatings[album.id] is defined %}
-                                {% set myRating = userRatings[album.id] %}
-                                <span class="text-xs text-white bg-blue-600 font-bold px-1.5 py-0.5 rounded" title="Your rating">
-                                    {{ myRating }}
-                                </span>
-                            {% endif %}
+                                    <!-- User Rating Badge (if exists) -->
+                                    {% if userRatings[album.id] is defined %}
+                                        {% set myRating = userRatings[album.id] %}
+                                        <span class="text-xs text-white bg-blue-600 font-bold px-1.5 py-0.5 rounded" title="Your rating">
+                                            {{ myRating }}
+                                        </span>
+                                    {% endif %}
 
-                            <!-- Review icon (if reviewed) -->
-                            {% if userReviews[album.id] is defined %}
-                                <span class="inline-block bg-yellow-400 text-black rounded px-1.5 py-0.5" title="You reviewed this album">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M2 4.5A2.5 2.5 0 014.5 2h15A2.5 2.5 0 0122 4.5v11a2.5 2.5 0 01-2.5 2.5H7.414l-5.707 5.707A1 1 0 011 22V4.5z" />
-                                    </svg>
-                                </span>
-                            {% endif %}
-                        </div>
+                                    <!-- Review icon (if reviewed) -->
+                                    {% if userReviews[album.id] is defined %}
+                                        <span class="inline-block bg-yellow-400 text-black rounded px-1.5 py-0.5" title="You reviewed this album">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M2 4.5A2.5 2.5 0 014.5 2h15A2.5 2.5 0 0122 4.5v11a2.5 2.5 0 01-2.5 2.5H7.414l-5.707 5.707A1 1 0 011 22V4.5z" />
+                                            </svg>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+
+                        {% if app.user and is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('album_edit', { id: album.id, slug: album.slug }) }}" class="custom-shadow absolute top-2 right-2 p-1 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition">
+                                <i class="fas fa-edit text-black"></i>
+                            </a>
+
+                            <form method="post"
+                                action="{{ path('album_delete', { id: album.id, slug: album.slug }) }}"
+                                onsubmit="return confirm('Are you sure you want to delete {{ album.title }}?');"
+                                class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition"
+                            >
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ album.id) }}">
+                            <button type="submit"
+                                    class="p-1 bg-red-600 rounded-full cursor-pointer"
+                                    aria-label="Delete {{ album.title }}">
+                                <i class="fas fa-trash text-white"></i>
+                            </button>
+                            </form>
+                        {% endif %}
                     </div>
-                </a>
-
                 {% else %}
                     <p class="text-gray-400">No albums found.</p>
                 {% endfor %}

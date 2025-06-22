@@ -42,6 +42,26 @@
                 </select>
             </div>
 
+            <div>
+                <label for="musician_id" class="text-sm font-medium text-yellow-400">Musician</label>
+                <select id="musician_id" name="musician_id" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 cursor-pointer">
+                    <option value="">All Musicians</option>
+                    {% for musician in musicians %}
+                        <option value="{{ musician.id }}" {% if selectedMusicianId == musician.id %}selected{% endif %}>{{ musician.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="album_id" class="text-sm font-medium text-yellow-400">Album</label>
+                <select id="album_id" name="album_id" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 cursor-pointer">
+                    <option value="">All Albums</option>
+                    {% for album in albums %}
+                        <option value="{{ album.id }}" {% if selectedAlbumId == album.id %}selected{% endif %}>{{ album.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <button type="submit" class="cursor-pointer bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded w-full transition">
                 Apply Filters
             </button>

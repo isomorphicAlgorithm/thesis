@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Album;
 use App\Entity\Band;
 use App\Entity\Genre;
+use App\Entity\Musician;
 use App\Form\BandType;
+use App\Repository\AlbumRepository;
 use App\Repository\GenreRepository;
+use App\Repository\MusicianRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,11 +41,13 @@ class BandController extends AbstractController
     }
 
     #[Route('/', name: 'band_list')]
-    public function list(Request $request, GenreRepository $genreRepository, EntityManagerInterface $em, PaginatorInterface $paginator): Response
+    public function list(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, GenreRepository $genreRepository, MusicianRepository $musicianRepository, AlbumRepository $albumRepository): Response
     {
         $sort = $request->query->get('sort', 'name');
         $order = $request->query->get('order', 'asc');
         $genreId = $request->query->get('genre_id');
+        $musicianId = $request->query->get('musician_id');
+        $albumId = $request->query->get('album_id');
 
         // Validate sort and order values
         $allowedSorts = ['name', 'created'];
@@ -68,12 +74,32 @@ class BandController extends AbstractController
         }
 
         $genre = null;
-
+        // Filtering by genre
         if ($genreId) {
             $genre = $em->getRepository(Genre::class)->find($genreId);
             $qb->join('b.genres', 'g')
                 ->andWhere('g.id = :genreId')
                 ->setParameter('genreId', $genreId);
+        }
+
+        $musician = null;
+        // Filtering by musician
+        if ($musicianId) {
+            $musician = $em->getRepository(Musician::class)->findOneBy(['id' => $musicianId]);
+
+            $qb->join('b.musicians', 'm')
+                ->andWhere('m.id = :musicianId')
+                ->setParameter('musicianId', $musicianId);
+        }
+
+        $album = null;
+        // Filtering by album
+        if ($albumId) {
+            $album = $em->getRepository(Album::class)->findOneBy(['id' => $albumId]);
+
+            $qb->join('b.albums', 'a')
+                ->andWhere('a.id = :albumId')
+                ->setParameter('albumId', $albumId);
         }
 
         $pagination = $paginator->paginate(
@@ -90,10 +116,16 @@ class BandController extends AbstractController
         );
 
         return $this->render('band/list.html.twig', [
-            'pagination' => $pagination,
             'genre' => $genre,
+            'musician' => $musician,
+            'album' => $album,
             'genres' => $genreRepository->findAll(),
+            'musicians' => $musicianRepository->findAll(),
+            'albums' => $albumRepository->findAll(),
             'selectedGenreId' => $genreId,
+            'selectedMusicianId' => $musicianId,
+            'selectedAlbumId' => $albumId,
+            'pagination' => $pagination,
             'totalBands' =>  $pagination->getTotalItemCount(),
         ]);
     }

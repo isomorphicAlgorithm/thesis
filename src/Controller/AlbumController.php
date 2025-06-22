@@ -3,11 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Album;
-use App\Entity\Band;
-use App\Entity\Genre;
-use App\Entity\Musician;
 use App\Entity\Rating;
-use App\Form\MusicianType;
+use App\Form\AlbumType;
 use App\Repository\AlbumRepository;
 use App\Repository\BandRepository;
 use App\Repository\GenreRepository;
@@ -16,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -257,6 +255,15 @@ class AlbumController extends AbstractController
                         ->addOrderBy('myRating', $order);
                 }
                 break;
+
+            default:
+                $sortField = match ($sort) {
+                    'created' => 'a.createdAt',
+                    default   => 'a.title',
+                };
+
+                $qb->addOrderBy($sortField, $order);
+                break;
         }
 
         $pagination = $paginator->paginate(
@@ -488,5 +495,113 @@ class AlbumController extends AbstractController
             'success' => true,
             'redirectUrl' => $redirectUrl,
         ]);
+    }
+
+    #[Route('/create', name: 'album_create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $em): Response
+    {
+        $album = new Album();
+
+        $form = $this->createForm(AlbumType::class, $album);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('album_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('albums_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $album->setCoverImage($newFilename);
+            }
+
+            $em->persist($album);
+            $em->flush();
+
+            $this->addFlash('success', 'Album created successfully');
+
+            return $this->redirectToRoute('album_show', [
+                'id'   => $album->getId(),
+                'slug' => $album->getSlug(),
+            ]);
+        }
+
+        return $this->render('album/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/edit', name: 'album_edit', methods: ['GET', 'POST'])]
+    public function edit(Album $album, Request $request, EntityManagerInterface $em): Response
+    {
+        // Links handling
+        $rawLinks = $album->getLinks();
+
+        if (is_array($rawLinks)) {
+            $album->setLinks(array_values($rawLinks));
+        }
+
+        $form = $this->createForm(AlbumType::class, $album);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('album_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('albums_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $album->setCoverImage($newFilename);
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Album updated successfully');
+
+            return $this->redirectToRoute('album_show', [
+                'id'   => $album->getId(),
+                'slug' => $album->getSlug(),
+            ]);
+        }
+
+        return $this->render('album/edit.html.twig', [
+            'form' => $form->createView(),
+            'album' => $album,
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/delete', name: 'album_delete', methods: ['POST'])]
+    public function delete(Album $album, Request $request, EntityManagerInterface $em): Response
+    {
+        if (!$this->isCsrfTokenValid('delete' . $album->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em->remove($album);
+        $em->flush();
+
+        $this->addFlash('success', 'Album deleted');
+
+        return $this->redirectToRoute('album_list');
     }
 }
