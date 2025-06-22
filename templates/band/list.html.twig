@@ -50,33 +50,65 @@
         <!-- Bands List -->
         <div class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border-2 border-yellow-500/60">
 
-            <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-yellow-400">
-                    <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clip-rule="evenodd" />
-                    <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
-                </svg>
-                Explore Bands
-                {% if  genre %}
-                    - <span class="text-yellow-400">{{ genre.displayName }}</span>
-                {% endif %}
-                <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total songs matching filters">
-                    {{ totalBands }} bands
-                </span>
-            </h1>
+            <div class="flex items-center mb-6">
+                <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-yellow-400">
+                        <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clip-rule="evenodd" />
+                        <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
+                    </svg>
+                    Explore Bands
+                    {% if genre %}
+                        - <span class="text-yellow-400">{{ genre.displayName }}</span>
+                    {% endif %}
+                </h1>
+
+                <div class="ml-auto flex items-center gap-4">
+                    {% if app.user and is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('band_create') }}"
+                        class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded custom-shadow transition">
+                            + New Band
+                        </a>
+                    {% endif %}
+
+                    <span class="text-yellow-400 font-mono text-lg select-none" title="Total bands matching filters">
+                        {{ totalBands }} bands
+                    </span>
+                </div>
+            </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                 {% for band in pagination %}
-                    <a href="{{ path('band_show', { id: band.id, slug: band.slug }) }}"
-                    class="group bg-yellow-600/10 custom-shadow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
-                        <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}"
-                            alt="{{ band.name }}"
-                            class="h-48 w-full object-cover" />
-                        <div class="p-4">
-                            <h2 class="text-lg font-bold text-yellow-50 group-hover:text-yellow-400 transition-colors">
-                                {{ band.name }}
-                            </h2>
-                        </div>
-                    </a>
+                    <div class="relative group">
+                        <a href="{{ path('band_show', { id: band.id, slug: band.slug }) }}" class="block bg-yellow-600/10 custom-shadow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                            <img src="{% if file_exists_in_public('uploads/bands/' ~ band.coverImage) %}{{ asset('uploads/bands/' ~ band.coverImage) }}{% else %}{{ band.coverImage }}{% endif %}"
+                                alt="{{ band.name }}"
+                                class="h-48 w-full object-cover" />
+                            <div class="p-4">
+                                <h2 class="text-lg font-bold text-yellow-50 group-hover:text-yellow-400 transition-colors">
+                                    {{ band.name }}
+                                </h2>
+                            </div>
+                        </a>
+
+                        {% if app.user and is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('band_edit', { id: band.id, slug: band.slug }) }}" class="custom-shadow absolute top-2 right-2 p-1 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition">
+                                <i class="fas fa-edit text-black"></i>
+                            </a>
+
+                            <form method="post"
+                                action="{{ path('band_delete', { id: band.id, slug: band.slug }) }}"
+                                onsubmit="return confirm('Are you sure you want to delete {{ band.name }}?');"
+                                class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition"
+                            >
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ band.id) }}">
+                            <button type="submit"
+                                    class="p-1 bg-red-600 rounded-full cursor-pointer"
+                                    aria-label="Delete {{ band.name }}">
+                                <i class="fas fa-trash text-white"></i>
+                            </button>
+                            </form>
+                        {% endif %}
+                    </div>
                 {% else %}
                     <p class="text-gray-400">No bands found.</p>
                 {% endfor %}

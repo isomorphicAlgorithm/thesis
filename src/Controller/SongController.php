@@ -8,12 +8,12 @@ use App\Entity\Favorite;
 use App\Entity\Genre;
 use App\Entity\Musician;
 use App\Entity\Song;
-use App\Form\MusicianType;
 use App\Repository\AlbumRepository;
 use App\Repository\BandRepository;
 use App\Repository\FavoriteRepository;
 use App\Repository\GenreRepository;
 use App\Repository\MusicianRepository;
+use App\Repository\SongRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -218,5 +218,24 @@ class SongController extends AbstractController
             'favoritedSongIds' => $favoritedSongIds,
             'totalSongs' =>  $pagination->getTotalItemCount(),
         ]);
+    }
+
+    #[Route('/autocomplete/songs', name: 'autocomplete_songs')]
+    public function autocompleteSongs(Request $request, SongRepository $repo): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        $songs = $repo->createQueryBuilder('s')
+            ->where('s.title LIKE :q')
+            ->setParameter('q', '%' . $q . '%')
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getResult();
+
+        $data = array_map(fn(Song $s) => [
+            'id' => $s->getId(),
+            'text' => $s->getTitle()
+        ], $songs);
+
+        return $this->json(['results' => $data]);
     }
 }

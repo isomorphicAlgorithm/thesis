@@ -21,16 +21,23 @@
 
         <!-- Musician Info (Name, Date, About) -->
         <div class="flex-1 flex flex-col space-y-4 self-center">
-            <div>
-                <h1 class="text-4xl font-bold">{{ musician.name }}</h1>
-                <p class="text-sm text-gray-400 inline-flex items-center gap-1.5 mt-1">
-                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M6.75 3v1.5m10.5-1.5v1.5M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-8.25a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 10.5v8.25" />
+            <div class="flex items-center justify-between">
+                <h1 class="text-4xl font-bold text-yellow-50">{{ musician.name }}</h1>
+                <a href="{{ path('musician_list') }}" class="text-yellow-400 hover:text-yellow-300 text-base font-semibold inline-flex items-center gap-2 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
-                    Years Active: {{ musician.activeFrom|date('F Y') }} - {{ musician.activeUntil|date('F Y') }}
-                </p>
+                    Back to list
+                </a>
             </div>
+
+            <p class="text-sm text-gray-400 inline-flex items-center gap-1.5">
+                <svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M6.75 3v1.5m10.5-1.5v1.5M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-8.25a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 10.5v8.25" />
+                </svg>
+                Years Active: {{ musician.activeFrom|date('F Y') }} - {{ musician.activeUntil|date('F Y') }}
+            </p>
 
             <div>
                 <h2 class="text-xl font-semibold text-yellow-50 mb-2 flex items-center gap-2">

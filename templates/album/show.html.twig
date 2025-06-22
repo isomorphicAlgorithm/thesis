@@ -4,6 +4,7 @@
 
 {% block body %}
 <div class="max-w-6xl mx-auto mt-12 text-yellow-50 space-y-10 px-4">
+
     <!-- Cards Row -->
     <div class="flex flex-col lg:flex-row gap-6">
 
@@ -55,6 +56,12 @@
 
         <!-- Rating + Links Combined Card -->
         <div class="w-full lg:w-2/6 bg-black/70 p-7 rounded-xl border-2 border-yellow-500/60 flex flex-col items-center justify-start gap-7 min-w-0">
+            <a href="{{ path('album_list') }}" class="text-yellow-400 hover:text-yellow-300 text-base font-semibold inline-flex items-center gap-2 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+                Back to list
+            </a>
 
             <!-- Average Rating -->
             {% set averageScore = album.averageRating|default('N/A') %}

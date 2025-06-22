@@ -308,6 +308,12 @@ class Band implements SlugSourceInterface
         return $this;
     }
 
+    public function clearSongs(): self
+    {
+        $this->songs->clear();
+        return $this;
+    }
+
     /**
      * @return Collection<int, Event>
      */

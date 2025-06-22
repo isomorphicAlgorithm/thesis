@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "round-slider/dist/roundslider.min.css";
+@import "select2/dist/css/select2.min.css";
 
 main {
     transition: background-color 0.5s ease, color 0.5s ease;
@@ -34,7 +35,7 @@ body.theme-dark {
 }
 
 .mySwiper .swiper-wrapper {
-  width: calc(4 * 15rem + 3 * 1rem) !important; /* 4 × w-60 + 3 × spaceBetween */
+    width: calc(4 * 15rem + 3 * 1rem) !important; /* 4 × w-60 + 3 × spaceBetween */
 }
 
 .hover\:custom-glow:hover {
@@ -46,22 +47,75 @@ button:hover {
 }
 
 .custom-shadow {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-              0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  transition-property: box-shadow;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    transition-property: box-shadow;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
 }
 
-/* On hover, shadow changes to yellow-500 colored shadow */
 .custom-shadow:hover {
-  /* Tailwind yellow-500 = #f59e0b */
-  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.5),
-              0 4px 6px -4px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.5),
+                0 4px 6px -4px rgba(245, 158, 11, 0.3);
 }
 
 button.no-glow:hover {
     box-shadow: none;
+}
+
+.choices__list--dropdown {
+    @apply bg-zinc-800 border-gray-700 text-yellow-200;
+}
+.choices__list--dropdown .choices__item {
+    @apply text-yellow-500;
+}
+.choices__item--selectable.is-highlighted {
+    @apply bg-yellow-500 text-black;
+}
+.choices__list--multiple .choices__item {
+    @apply bg-yellow-500 text-black font-semibold rounded-xl px-2 py-1 mr-1 mb-1;
+}
+.choices__input {
+    @apply bg-transparent text-yellow-200;
+}
+
+.choices__inner {
+    @apply bg-zinc-800/80 border border-gray-700 text-yellow-200 rounded-lg px-4 py-2;
+}
+
+/* Dropdown options container */
+.select2-container--default .select2-results > .select2-results__options {
+    @apply bg-zinc-900 border border-zinc-700 text-yellow-200 rounded-lg shadow-lg;
+}
+
+/* Individual dropdown option */
+.select2-container--default .select2-results__option {
+    @apply px-4 py-2 text-yellow-300 text-sm;
+}
+
+/* Highlighted option (hover/focus) */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    @apply hover:bg-yellow-600/20 text-black font-semibold;
+}
+
+/* Selected items in input field */
+.select2-container--default .select2-selection__choice {
+    @apply bg-yellow-400 text-black font-medium rounded-full px-3 py-1 text-xs mr-2 mt-2;
+}
+
+/* Remove “×” button in selected items */
+.select2-container--default .select2-selection__choice__remove {
+    @apply text-black hover:text-white font-bold ml-1;
+}
+
+/* Multiple-selection input area */
+.select2-container--default .select2-selection--multiple {
+    @apply bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 min-h-[3rem] flex flex-wrap;
+}
+
+/* Input field inside the selection box */
+.select2-container--default .select2-search--inline .select2-search__field {
+    @apply bg-transparent text-yellow-200 text-sm placeholder:text-yellow-200 focus:outline-none;
 }
 
 #rating-slider {
@@ -117,9 +171,9 @@ button.no-glow:hover {
 }
 
 .arrow-btn {
-  @apply absolute top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow-lg
-         bg-black/60 backdrop-blur-md text-yellow-300 hover:bg-yellow-400 hover:text-black
-         transition-all duration-300 z-10;
+    @apply absolute top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow-lg
+        bg-black/60 backdrop-blur-md text-yellow-300 hover:bg-yellow-400 hover:text-black
+        transition-all duration-300 z-10;
 }
 
 @import "tailwindcss/utilities";

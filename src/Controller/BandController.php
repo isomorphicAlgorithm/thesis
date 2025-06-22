@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/bands')]
 class BandController extends AbstractController
@@ -34,41 +35,7 @@ class BandController extends AbstractController
             'band' => $band,
         ]);
     }
-    /*
-    #[Route('/{id}/edit', name: 'band_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Band $band, EntityManagerInterface $em): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(BandType::class, $band);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Band updated successfully.');
-            return $this->redirectToRoute('band_show', ['id' => $band->getId()]);
-        }
-
-        return $this->render('band/edit.html.twig', [
-            'band' => $band,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}/delete', name: 'band_delete', methods: ['POST'])]
-    public function delete(Request $request, Band $band, EntityManagerInterface $em): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        if ($this->isCsrfTokenValid('delete' . $band->getId(), $request->request->get('_token'))) {
-            $em->remove($band);
-            $em->flush();
-            $this->addFlash('success', 'Band deleted.');
-        }
-
-        return $this->redirectToRoute('homepage');
-    }
-*/
     #[Route('/', name: 'band_list')]
     public function list(Request $request, GenreRepository $genreRepository, EntityManagerInterface $em, PaginatorInterface $paginator): Response
     {
@@ -117,7 +84,7 @@ class BandController extends AbstractController
                 'sortFieldWhitelist' => [],
                 'defaultSortFieldName' => null,
                 'defaultSortDirection' => null,
-                'sortFieldParameterName' => 'ignore', // prevent KNP from parsing ?sort=
+                'sortFieldParameterName' => 'ignore',
                 'sortDirectionParameterName' => 'ignore',
             ]
         );
@@ -129,5 +96,121 @@ class BandController extends AbstractController
             'selectedGenreId' => $genreId,
             'totalBands' =>  $pagination->getTotalItemCount(),
         ]);
+    }
+
+    #[Route('/create', name: 'band_create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $em): Response
+    {
+        $band = new Band();
+
+        $form = $this->createForm(BandType::class, $band);
+
+        $form->handleRequest($request);
+
+        // Debugging
+        /*
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                foreach ($form->getErrors(true) as $error) {
+                    dump($error->getMessage());
+                }
+                dd('Form invalid');
+            }
+        }*/
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+            if ($coverFile) {
+                $newFilename = uniqid('band_', true) . '.' . $coverFile->guessExtension();
+                try {
+                    $coverFile->move(
+                        $this->getParameter('bands_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+                $band->setCoverImage($newFilename);
+            }
+
+            $em->persist($band);
+            $em->flush();
+
+            $this->addFlash('success', 'Band created successfully');
+
+            return $this->redirectToRoute('band_show', [
+                'id'   => $band->getId(),
+                'slug' => $band->getSlug(),
+            ]);
+        }
+
+        return $this->render('band/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/edit', name: 'band_edit', methods: ['GET', 'POST'])]
+    public function edit(Band $band, Request $request, EntityManagerInterface $em): Response
+    {
+        // Links handling
+        $rawLinks = $band->getLinks();
+
+        if (is_array($rawLinks)) {
+            $band->setLinks(array_values($rawLinks));
+        }
+
+        $form = $this->createForm(BandType::class, $band);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('band_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('bands_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $band->setCoverImage($newFilename);
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Band updated successfully');
+
+            return $this->redirectToRoute('band_show', [
+                'id'   => $band->getId(),
+                'slug' => $band->getSlug(),
+            ]);
+        }
+
+        return $this->render('band/edit.html.twig', [
+            'form' => $form->createView(),
+            'band' => $band,
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/delete', name: 'band_delete', methods: ['POST'])]
+    public function delete(Band $band, Request $request, EntityManagerInterface $em): Response
+    {
+        if (!$this->isCsrfTokenValid('delete' . $band->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em->remove($band);
+        $em->flush();
+
+        $this->addFlash('success', 'Band deleted');
+
+        return $this->redirectToRoute('band_list');
     }
 }
