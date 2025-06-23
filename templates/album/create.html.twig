@@ -130,19 +130,19 @@
                 {{ form_errors(form.musicians) }}
             </div>
 
-           <!-- Songs -->
+            <!-- Songs -->
             <div class="col-span-full">
-            {{ form_label(form.songs, 'Songs', {
-                label_attr: { class: 'text-yellow-400 font-semibold block mb-1' }
+                {{ form_label(form.songs, 'Songs', {
+                    label_attr: { class: 'text-yellow-400 font-semibold block mb-1' }
+                    }) }}
+                {{ form_widget(form.songs, {
+                    id: 'song-select',
+                    attr: {
+                        class: 'song-autocomplete w-full rounded-md bg-gray-900 text-white',
+                        'data-autocomplete-url': path('autocomplete_songs')
+                    }
                 }) }}
-            {{ form_widget(form.songs, {
-                id: 'song-select',
-                attr: {
-                    class: 'song-autocomplete w-full rounded-md bg-gray-900 text-white',
-                    'data-autocomplete-url': path('autocomplete_songs')
-                }
-            }) }}
-            {{ form_errors(form.songs) }}
+                {{ form_errors(form.songs) }}
             </div>
 
             <!-- Divider -->

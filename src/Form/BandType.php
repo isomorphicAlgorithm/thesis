@@ -102,6 +102,7 @@ class BandType extends AbstractType
                 'attr'         => [
                     'class' => 'musician-select',
                 ],
+                'by_reference'  => false,
                 'choice_attr'  => function (Musician $m) {
                     $raw = $m->getCoverImage();
                     if ($raw && preg_match('/^https?:\/\//', $raw)) {
@@ -127,6 +128,7 @@ class BandType extends AbstractType
                 'attr'         => [
                     'class' => 'album-select',
                 ],
+                'by_reference'  => false,
                 'choice_attr'  => function (Album $a) {
                     $raw = $a->getCoverImage();
                     if ($raw && preg_match('/^https?:\/\//', $raw)) {
@@ -161,7 +163,6 @@ class BandType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-
         $resolver->setDefaults([
             'data_class' => Band::class,
             //'song_choices' => [],

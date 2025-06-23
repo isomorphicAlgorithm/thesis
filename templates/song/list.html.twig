@@ -94,29 +94,41 @@
         <!-- Songs List -->
         <div class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border-2 border-yellow-500/60">
 
-            <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="size-8 text-yellow-400">
-                    <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd"/>
-                </svg>
-                Explore Songs
-                {% if band %}
-                    -
-                    <span class="text-yellow-400">{{ band.name }}</span>
-                {% endif %}
-                {% if musician %}
-                    -
-                    <span class="text-yellow-400">{{ musician.name }}</span>
-                {% endif %}
-                {% if  genre %}
-                    - <span class="text-yellow-400">{{ genre.displayName }}</span>
-                {% endif %}
-                {% if  album %}
-                    - <span class="text-yellow-400">{{ album.title }}</span>
-                {% endif %}
-                <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total songs matching filters">
-                    {{ totalSongs }} songs
-                </span>
-            </h1>
+            <div class="flex items-center mb-6">
+                <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="size-8 text-yellow-400">
+                        <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd"/>
+                    </svg>
+                    Explore Songs
+                    {% if band %}
+                        -
+                        <span class="text-yellow-400">{{ band.name }}</span>
+                    {% endif %}
+                    {% if musician %}
+                        -
+                        <span class="text-yellow-400">{{ musician.name }}</span>
+                    {% endif %}
+                    {% if  genre %}
+                        - <span class="text-yellow-400">{{ genre.displayName }}</span>
+                    {% endif %}
+                    {% if  album %}
+                        - <span class="text-yellow-400">{{ album.title }}</span>
+                    {% endif %}
+                </h1>
+
+                <div class="ml-auto flex items-center gap-4">
+                    {% if app.user and is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('song_create') }}"
+                            class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded custom-shadow transition">
+                            + New Song
+                        </a>
+                    {% endif %}
+
+                    <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total songs matching filters">
+                        {{ totalSongs }} songs
+                    </span>
+                </div>
+            </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-4">
                 {% for song in pagination %}
@@ -150,6 +162,25 @@
                                             c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                                 </svg>
                             </button>
+                        {% endif %}
+
+                        {% if app.user and is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('song_edit', { id: song.id, slug: song.slug }) }}" class="custom-shadow absolute top-2 left-2 p-1 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition">
+                                <i class="fas fa-edit text-black"></i>
+                            </a>
+
+                            <form method="post"
+                                action="{{ path('song_delete', { id: song.id, slug: song.slug }) }}"
+                                onsubmit="return confirm('Are you sure you want to delete {{ song.title }}?');"
+                                class="absolute top-12 left-2 opacity-0 group-hover:opacity-100 transition"
+                            >
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ song.id) }}">
+                                    <button type="submit"
+                                            class="p-1 bg-red-600 rounded-full cursor-pointer"
+                                            aria-label="Delete {{ song.title }}">
+                                        <i class="fas fa-trash text-white"></i>
+                                    </button>
+                            </form>
                         {% endif %}
 
                         <a href="{{ path('song_show', { id: song.id, slug: song.slug }) }}">

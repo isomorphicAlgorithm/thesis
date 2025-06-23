@@ -121,11 +121,11 @@
                                 class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition"
                             >
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ band.id) }}">
-                            <button type="submit"
-                                    class="p-1 bg-red-600 rounded-full cursor-pointer"
-                                    aria-label="Delete {{ band.name }}">
-                                <i class="fas fa-trash text-white"></i>
-                            </button>
+                                <button type="submit"
+                                        class="p-1 bg-red-600 rounded-full cursor-pointer"
+                                        aria-label="Delete {{ band.name }}">
+                                    <i class="fas fa-trash text-white"></i>
+                                </button>
                             </form>
                         {% endif %}
                     </div>

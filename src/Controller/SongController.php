@@ -8,6 +8,7 @@ use App\Entity\Favorite;
 use App\Entity\Genre;
 use App\Entity\Musician;
 use App\Entity\Song;
+use App\Form\SongType;
 use App\Repository\AlbumRepository;
 use App\Repository\BandRepository;
 use App\Repository\FavoriteRepository;
@@ -18,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -204,7 +206,6 @@ class SongController extends AbstractController
             'band' => $band,
             'musician' => $musician,
             'album' => $album,
-            'pagination' => $pagination,
             'genre' => $genre,
             'genres' => $genreRepository->findAll(),
             'bands' => $bandRepository->findAll(),
@@ -216,6 +217,7 @@ class SongController extends AbstractController
             'selectedGenreId' => $genreId,
             'favoritedOnly' => $favoritedOnly,
             'favoritedSongIds' => $favoritedSongIds,
+            'pagination' => $pagination,
             'totalSongs' =>  $pagination->getTotalItemCount(),
         ]);
     }
@@ -237,5 +239,113 @@ class SongController extends AbstractController
         ], $songs);
 
         return $this->json(['results' => $data]);
+    }
+
+    #[Route('/create', name: 'song_create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $em): Response
+    {
+        $song = new Song();
+
+        $form = $this->createForm(SongType::class, $song);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('song_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('songs_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $song->setCoverImage($newFilename);
+            }
+
+            $em->persist($song);
+            $em->flush();
+
+            $this->addFlash('success', 'Song created successfully');
+
+            return $this->redirectToRoute('song_show', [
+                'id'   => $song->getId(),
+                'slug' => $song->getSlug(),
+            ]);
+        }
+
+        return $this->render('song/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/edit', name: 'song_edit', methods: ['GET', 'POST'])]
+    public function edit(Song $song, Request $request, EntityManagerInterface $em): Response
+    {
+        // Links handling
+        $rawLinks = $song->getLinks();
+
+        if (is_array($rawLinks)) {
+            $song->setLinks(array_values($rawLinks));
+        }
+
+        $form = $this->createForm(SongType::class, $song);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $coverFile */
+            $coverFile = $form->get('coverImageFile')->getData();
+
+            if ($coverFile) {
+                $newFilename = uniqid('song_', true) . '.' . $coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('songs_covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Cover could not be uploaded');
+                }
+
+                $song->setCoverImage($newFilename);
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Song updated successfully');
+
+            return $this->redirectToRoute('song_show', [
+                'id'   => $song->getId(),
+                'slug' => $song->getSlug(),
+            ]);
+        }
+
+        return $this->render('song/edit.html.twig', [
+            'form' => $form->createView(),
+            'song' => $song,
+        ]);
+    }
+
+    #[Route('/{id}-{slug}/delete', name: 'song_delete', methods: ['POST'])]
+    public function delete(Song $song, Request $request, EntityManagerInterface $em): Response
+    {
+        if (!$this->isCsrfTokenValid('delete' . $song->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em->remove($song);
+        $em->flush();
+
+        $this->addFlash('success', 'Song deleted');
+
+        return $this->redirectToRoute('song_list');
     }
 }
