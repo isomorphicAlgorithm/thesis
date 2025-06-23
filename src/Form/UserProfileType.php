@@ -36,7 +36,6 @@ class UserProfileType extends AbstractType
                     ]),
                 ],
             ]);;
-        // Add more fields as needed
     }
 
     public function configureOptions(OptionsResolver $resolver): void

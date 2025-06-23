@@ -2,22 +2,16 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints as Assert;
 
-class RegistrationFormType extends AbstractType
+class UserSettingsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -33,26 +27,6 @@ class RegistrationFormType extends AbstractType
                         'minMessage' => 'Your username should be at least 6 characters.',
                         'max' => 32,
                         'maxMessage' => 'Your username can be at maximum 32 characters.'
-                    ]),
-                ],
-            ])
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'attr' => ['autocomplete' => 'email'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Email is required.',
-                    ]),
-                    new Email([
-                        'message' => 'Please enter a valid email address.',
-                    ]),
-                ],
-            ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms',
                     ]),
                 ],
             ])
@@ -77,14 +51,6 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Password must contain at least one uppercase letter, one lowercase letter, and one number.',
                     ]),
                 ],
-            ])
-        ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => User::class,
-        ]);
+            ]);
     }
 }
