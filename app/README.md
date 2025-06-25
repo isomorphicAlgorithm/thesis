@@ -24,27 +24,19 @@ docker-compose up -d
 
 4. Install PHP dependencies:
 ```bash
-cd app
-composer install
+docker-compose exec php composer install
 ```
 
 5. Install node dependencies & build assets:
 ```bash
-npm install
-npm run dev
+docker-compose exec php npm install
+docker-compose exec php npm run dev
 ```
 
 6. Run database migrations:
 ```bash
-php bin/console doctrine:migrations:migrate
+docker-compose exec php php bin/console doctrine:migrations:migrate
 ```
 
-7. Run the app:
-```bash
-symfony server:start
-```
-
-8. Access the app:
-http://localhost:9000
-
-
+7. Access the app:
+The app should now be accessible at: http://localhost:9000
