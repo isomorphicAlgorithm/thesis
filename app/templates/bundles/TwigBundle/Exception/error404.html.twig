@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-yellow-50">
+        <h1 class="text-4xl font-bold mb-4">Oops! 😕</h1>
+        <p class="text-lg mb-6">We couldn't find the page you're looking for.</p>
+        <a href="{{ path('homepage') }}" class="text-yellow-400 hover:underline">Go back to the homepage</a>
+    </div>
+{% endblock %}

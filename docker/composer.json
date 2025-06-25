@@ -1,0 +1,8 @@
+{
+    "require": {
+        "symfony/password-hasher": "^6.4",
+        "symfony/security-core": "^6.4",
+        "symfony/security-bundle": "^6.4",
+        "symfony/http-client": "^6.4"
+    }
+}

@@ -1,0 +1,11 @@
+.git
+.gitignore
+node_modules
+var/cache
+var/log
+var/sessions
+vendor
+*.md
+.env.local
+.env.test
+tests
