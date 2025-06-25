@@ -1,0 +1,191 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Albums | Bandito {% endblock %}
+
+{% block body %}
+
+<div class="max-w-screen-xl mx-auto px-4 py-6 text-yellow-50">
+    <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
+
+        <!-- Sidebar -->
+        <form method="get" class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border-2 border-yellow-500/60">
+            <h2 class="text-xl font-bold text-yellow-50 mb-2 flex items-center ">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-yellow-400">
+                    <path fill-rule="evenodd" d="M2.25 4.5A.75.75 0 0 1 3 3.75h14.25a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1-.75-.75Zm0 4.5A.75.75 0 0 1 3 8.25h9.75a.75.75 0 0 1 0 1.5H3A.75.75 0 0 1 2.25 9Zm15-.75A.75.75 0 0 1 18 9v10.19l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 1 1 1.06-1.06l2.47 2.47V9a.75.75 0 0 1 .75-.75Zm-15 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                </svg>
+                Filter
+            </h2>
+
+            <div>
+                {% set currentSort = app.request.get('sort')|default('title') %}
+                <label for="sort" class="text-sm font-medium text-yellow-400">Sort by</label>
+                <select id="sort" name="sort" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
+                    <optgroup label="General">
+                        <option value="title" {% if currentSort == 'title' %}selected{% endif %}>Title</option>
+                        <option value="created" {% if currentSort == 'created' %}selected{% endif %}>Recently Added</option>
+                        <option value="most_reviewed" {% if currentSort == 'most_reviewed' %}selected{% endif %}>Most Reviewed</option>
+                        <option value="highest_avg_rating" {% if currentSort == 'highest_avg_rating' %}selected{% endif %}>Highest Rated</option>
+                    </optgroup>
+
+                    {% if app.user %}
+                        <optgroup label="My Activity">
+                            <option value="reviewed_by_me" {% if currentSort == 'reviewed_by_me' %}selected{% endif %}>Reviewed by Me</option>
+                            <option value="rated_by_me" {% if currentSort == 'rated_by_me' %}selected{% endif %}>Rated by Me</option>
+                            <option value="highest_my_rating" {% if currentSort == 'highest_my_rating' %}selected{% endif %}>Highest Rated by Me</option>
+                        </optgroup>
+                    {% endif %}
+                </select>
+            </div>
+
+            <div>
+                <label for="order" class="text-sm font-medium text-yellow-400">Order</label>
+                <select id="order" name="order" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
+                    <option value="asc" {% if app.request.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if app.request.get('order') == 'desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="genre_id" class="text-sm font-medium text-yellow-400">Genre</label>
+                <select id="genre_id" name="genre_id" class="t-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer">
+                    <option value="">All Genres</option>
+                    {% for genre in genres %}
+                        <option value="{{ genre.id }}" {% if selectedGenreId == genre.id %}selected{% endif %}>{{ genre.displayName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="band_id" class="text-sm font-medium text-yellow-400">Band</label>
+                <select id="band_id" name="band_id" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 cursor-pointer">
+                    <option value="">All Bands</option>
+                    {% for band in bands %}
+                        <option value="{{ band.id }}" {% if selectedBandId == band.id %}selected{% endif %}>{{ band.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="musician_id" class="text-sm font-medium text-yellow-400">Musician</label>
+                <select id="musician_id" name="musician_id" class="mt-1 w-full rounded bg-yellow-600/10 text-yellow-50 border border-zinc-700 cursor-pointer">
+                    <option value="">All Musicians</option>
+                    {% for musician in musicians %}
+                        <option value="{{ musician.id }}" {% if selectedMusicianId == musician.id %}selected{% endif %}>{{ musician.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="cursor-pointer bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded w-full transition">
+                Apply Filters
+            </button>
+        </form>
+
+        <!-- Albums List -->
+        <div class="self-start bg-black/70 backdrop-blur-md p-6 rounded-2xl shadow-md space-y-4 border-2 border-yellow-500/60">
+
+            <div class="flex items-center mb-6">
+                <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3 mb-6">
+                    <svg class="size-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></svg>
+                    Explore Albums
+                    {% if band %}
+                        - <span class="text-yellow-400">{{ band.name }}</span>
+                    {% endif %}
+                    {% if musician %}
+                        - <span class="text-yellow-400">{{ musician.name }}</span>
+                    {% endif %}
+                    {% if  genre %}
+                        - <span class="text-yellow-400">{{ genre.displayName }}</span>
+                    {% endif %}
+                </h1>
+
+                <div class="ml-auto flex items-center gap-4">
+                    {% if app.user and is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('album_create') }}"
+                            class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded custom-shadow transition">
+                            + New Album
+                        </a>
+                    {% endif %}
+
+                    <span class="ml-auto text-yellow-400 font-mono text-lg select-none" title="Total albums matching filters">
+                        {{ totalAlbums }} albums
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-6 gap-4">
+                {% for album in pagination %}
+                    <div class="relative group">
+                        <a href="{{ path('album_show', { id: album.id, slug: album.slug }) }}" class="block relative bg-yellow-600/10 custom-shadow dark:bg-zinc-800 rounded-2xl shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                            <!-- Album Cover -->
+                            <img src="{% if file_exists_in_public('uploads/albums/' ~ album.coverImage) %}{{ asset('uploads/albums/' ~ album.coverImage) }}{% else %}{{ album.coverImage }}{% endif %}"
+                                alt="{{ album.title }}"
+                                class="w-full h-28 object-cover" />
+
+                            <!-- Text info -->
+                            <div class="p-3">
+                                <h2 class="text-sm font-semibold text-yellow-50 group-hover:text-yellow-400 transition-colors truncate">
+                                    {{ album.title }}
+                                </h2>
+
+                                <div class="flex items-center gap-1 mt-1">
+                                    <!-- Average Rating Badge -->
+                                    {% set avgRating = album.averageRating|default(null) %}
+                                    {% if avgRating %}
+                                        {% set avgColor = avgRating >= 75 ? 'bg-green-500' : (avgRating >= 50 ? 'bg-yellow-500' : 'bg-red-500') %}
+                                        <span class="text-xs text-black font-bold px-1.5 py-0.5 rounded {{ avgColor }}" title="Average rating">
+                                            {{ avgRating|round }}
+                                        </span>
+                                    {% endif %}
+
+                                    <!-- User Rating Badge (if exists) -->
+                                    {% if userRatings[album.id] is defined %}
+                                        {% set myRating = userRatings[album.id] %}
+                                        <span class="text-xs text-white bg-blue-600 font-bold px-1.5 py-0.5 rounded" title="Your rating">
+                                            {{ myRating }}
+                                        </span>
+                                    {% endif %}
+
+                                    <!-- Review icon (if reviewed) -->
+                                    {% if userReviews[album.id] is defined %}
+                                        <span class="inline-block bg-yellow-400 text-black rounded px-1.5 py-0.5" title="You reviewed this album">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M2 4.5A2.5 2.5 0 014.5 2h15A2.5 2.5 0 0122 4.5v11a2.5 2.5 0 01-2.5 2.5H7.414l-5.707 5.707A1 1 0 011 22V4.5z" />
+                                            </svg>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+
+                        {% if app.user and is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('album_edit', { id: album.id, slug: album.slug }) }}" class="custom-shadow absolute top-2 right-2 p-1 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition">
+                                <i class="fas fa-edit text-black"></i>
+                            </a>
+
+                            <form method="post"
+                                action="{{ path('album_delete', { id: album.id, slug: album.slug }) }}"
+                                onsubmit="return confirm('Are you sure you want to delete {{ album.title }}?');"
+                                class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition"
+                            >
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ album.id) }}">
+                                    <button type="submit"
+                                            class="p-1 bg-red-600 rounded-full cursor-pointer"
+                                            aria-label="Delete {{ album.title }}">
+                                        <i class="fas fa-trash text-white"></i>
+                                    </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-400">No albums found.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% include 'components/pagination.html.twig' %}
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,301 @@
+<?php
+
+namespace App\Entity;
+
+use App\Contract\SlugSourceInterface;
+use App\Repository\UserRepository;
+use App\Entity\Traits\TimestampedEntity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\HasLifecycleCallbacks]
+
+class User implements UserInterface, PasswordAuthenticatedUserInterface, SlugSourceInterface
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    use TimestampedEntity;
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_verified = false;
+
+    #[ORM\Column(length: 32)]
+    private ?string $username = null;
+
+    #[ORM\Column(length: 128, unique: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 128)]
+    private ?string $password = null;
+
+    #[ORM\Column(length: 128, nullable: true)]
+    private ?string $cover_image = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $links = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
+    /**
+     * @var Collection<int, Rating>
+     */
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'user')]
+    private Collection $ratings;
+
+    /**
+     * @var Collection<int, Favorite>
+     */
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'user')]
+    private Collection $favorites;
+
+    /**
+     * @var Collection<int, CustomList>
+     */
+    #[ORM\OneToMany(targetEntity: CustomList::class, mappedBy: 'user')]
+    private Collection $customLists;
+
+    public function __construct()
+    {
+        $this->favorites = new ArrayCollection();
+        $this->customLists = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials(): void {}
+
+    public function isVerified(): bool
+    {
+        return $this->is_verified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->is_verified = $isVerified;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getCoverImage(): ?string
+    {
+        return $this->cover_image;
+    }
+
+    public function setCoverImage(?string $cover_image): static
+    {
+        $this->cover_image = $cover_image;
+
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
+
+        return $this;
+    }
+
+    public function getLinks(): ?array
+    {
+        return $this->links;
+    }
+
+    public function setLinks(?array $links): static
+    {
+        $this->links = $links;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getSlugSource(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @return Collection<int, Rating>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): static
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): static
+    {
+        if ($this->ratings->removeElement($rating)) {
+            if ($rating->getUser() === $this) {
+                $rating->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorite>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Favorite $favorite): static
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+            $favorite->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorite $favorite): static
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            if ($favorite->getUser() === $this) {
+                $favorite->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CustomList>
+     */
+    public function getCustomLists(): Collection
+    {
+        return $this->customLists;
+    }
+
+    public function addCustomList(CustomList $customList): static
+    {
+        if (!$this->customLists->contains($customList)) {
+            $this->customLists->add($customList);
+            $customList->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomList(CustomList $customList): static
+    {
+        if ($this->customLists->removeElement($customList)) {
+            if ($customList->getUser() === $this) {
+                $customList->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+}
