@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Musician | Bandito{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-cover bg-center py-12">
+    <div class="max-w-3xl mx-auto bg-black/70 backdrop-blur-md rounded-2xl shadow-xl p-8 space-y-6 border-2 border-yellow-500/60">
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-yellow-50 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-yellow-400">
+                    <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
+                    <path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
+                </svg>
+                Create New Musician
+            </h1>
+            <a href="{{ path('musician_list') }}" class="text-yellow-400 hover:text-yellow-300 text-base font-semibold inline-flex items-center gap-2 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+                Back to list
+            </a>
+        </div>
+
+        {{ form_start(form, {
+            attr: {
+                class: 'grid grid-cols-1 sm:grid-cols-2 gap-6',
+                enctype: 'multipart/form-data'
+            }
+        }) }}
+
+            <!-- Name -->
+            <div class="col-span-full">
+                {{ form_label(form.name, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
+                {{ form_widget(form.name, {
+                    attr: {
+                        class: 'mt-1 w-full bg-zinc-800/80 text-yellow-50 placeholder-gray-400 border border-gray-700 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 px-4 py-2 transition'
+                    }
+                }) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <!-- Active From -->
+            <div>
+                {{ form_label(form.activeFrom, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
+                {{ form_widget(form.activeFrom, {
+                    attr: {
+                        class: 'mt-1 w-full bg-zinc-800/80 text-yellow-50 border border-gray-700 rounded-lg px-4 py-2 focus:ring-yellow-500 focus:border-yellow-500 transition'
+                    }
+                }) }}
+                {{ form_errors(form.activeFrom) }}
+            </div>
+
+            <!-- Active From -->
+            <div>
+                {{ form_label(form.activeUntil, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
+                {{ form_widget(form.activeUntil, {
+                    attr: {
+                        class: 'mt-1 w-full bg-zinc-800/80 text-yellow-50 border border-gray-700 rounded-lg px-4 py-2 focus:ring-yellow-500 focus:border-yellow-500 transition'
+                    }
+                }) }}
+                {{ form_errors(form.activeUntil) }}
+            </div>
+
+            <!-- Divider -->
+            <hr class="col-span-full border-t border-yellow-500/30 my-4" />
+
+            <!-- Biography -->
+            <div class="col-span-full">
+                {{ form_label(form.bio, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
+                {{ form_widget(form.bio, {
+                    attr: {
+                        class: 'mt-1 w-full bg-zinc-800/80 text-yellow-50 border border-gray-700 rounded-lg px-4 py-2 focus:ring-yellow-500 focus:border-yellow-500 transition',
+                        rows: 5
+                    }
+                }) }}
+                {{ form_errors(form.bio) }}
+            </div>
+
+            <!-- Divider -->
+            <hr class="col-span-full border-t border-yellow-500/30 my-4" />
+
+            <!-- Links -->
+            {% include 'components/links.html.twig' %}
+
+            <!-- Divider -->
+            <hr class="col-span-full border-t border-yellow-500/30 my-4" />
+
+            <!-- Is Disbanded -->
+            <div class="col-span-full flex items-center">
+                {{ form_label(form.isDisbanded, null, { label_attr: { class: 'text-yellow-400 font-semibold cursor-pointer' } }) }}
+                {{ form_widget(form.isDisbanded, {
+                    attr: {
+                        class: 'ml-2 h-5 w-5 text-yellow-500 focus:ring-yellow-500 transition cursor-pointer'
+                    }
+                }) }}
+                {{ form_errors(form.isDisbanded) }}
+            </div>
+
+            <!-- Divider -->
+            <hr class="col-span-full border-t border-yellow-500/30 my-4" />
+
+            <!-- Cover Image Upload -->
+            <div class="col-span-full">
+                {{ form_label(form.coverImageFile, null, { label_attr: { class: 'text-yellow-400 font-semibold' } }) }}
+                    <div class="mt-2 flex items-center gap-4">
+                        {{ form_widget(form.coverImageFile, {
+                            attr: {
+                                class: 'text-yellow-50 file:bg-yellow-500 file:text-black file:rounded-lg file:px-4 file:py-2 file:font-medium hover:file:bg-yellow-400 transition cursor-pointer'
+                            }
+                        }) }}
+                    </div>
+                {{ form_errors(form.coverImageFile) }}
+            </div>
+
+            <!-- Divider -->
+            <hr class="col-span-full border-t border-yellow-500/30 my-4" />
+
+            <!-- Genres -->
+            <div class="col-span-full">
+                {{ form_label(form.genres, null, { label_attr: { class: 'text-yellow-400 font-semibold block mb-1' } }) }}
+                {{ form_widget(form.genres, {
+                    attr: {
+                        class: 'genre-select w-full'
+                    }
+                }) }}
+                {{ form_errors(form.genres) }}
+            </div>
+
+            <!-- Bands -->
+            <div class="col-span-full">
+                {{ form_label(form.bands, null, { label_attr: { class: 'text-yellow-400 font-semibold block mb-1' } }) }}
+                {{ form_widget(form.bands, {
+                    attr: {
+                        class: 'band-select w-full'
+                    }
+                }) }}
+                {{ form_errors(form.bands) }}
+            </div>
+
+            <!-- Albums -->
+            <div class="col-span-full">
+                {{ form_label(form.albums, null, { label_attr: { class: 'text-yellow-400 font-semibold block mb-1' } }) }}
+                    {{ form_widget(form.albums, {
+                        attr: {
+                            class: 'album-select w-full'
+                        }
+                    }) }}
+                {{ form_errors(form.albums) }}
+            </div>
+
+            <!-- Songs -->
+            <div class="col-span-full">
+                {{ form_label(form.songs, 'Songs', {
+                    label_attr: { class: 'text-yellow-400 font-semibold block mb-1' }
+                    }) }}
+                {{ form_widget(form.songs, {
+                    id: 'song-select',
+                    attr: {
+                        class: 'song-autocomplete w-full rounded-md bg-gray-900 text-white',
+                        'data-autocomplete-url': path('autocomplete_songs')
+                    }
+                }) }}
+                {{ form_errors(form.songs) }}
+            </div>
+
+            <!-- Divider -->
+            <hr class="col-span-full border-t border-yellow-500/30 my-4" />
+
+            <!-- Submit -->
+            <div class="col-span-full flex justify-end gap-4 mt-4">
+                <a href="{{ path('musician_list') }}"
+                    class="inline-block px-6 py-2 font-semibold bg-red-600 rounded-xl text-white custom-shadow hover:text-yellow-400 transition shadow-md hover:-translate-y-0.5">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="inline-flex items-center gap-2 bg-yellow-500 custom-shadow cursor-pointer text-black font-semibold px-6 py-2 rounded-2xl shadow-md transition hover:-translate-y-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Create Musician
+                </button>
+            </div>
+
+        {{ form_row(form._token) }}
+
+        {{ form_end(form, { render_rest: false }) }}
+    </div>
+</div>
+{% endblock %}

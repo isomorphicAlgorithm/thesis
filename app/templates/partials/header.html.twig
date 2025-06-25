@@ -1,0 +1,21 @@
+<header class="sticky top-0 z-50 bg-black/70 backdrop-blur-md text-yellow-50 flex items-center justify-between px-4 py-2 shadow">
+
+    <div class="flex items-center space-x-2">
+        <a href="{{ path('homepage') }}">
+            <img src="{{ asset('images/default_logo.png') }}" alt="Bandito Logo" class="h-12 w-auto scale-[1.4] origin-left object-contain drop-shadow-xl"/>
+        </a>
+        <span class="text-2xl font-bold ml-4">BANDITO</span>
+    </div>
+
+    {% include 'partials/header/search_bar.html.twig' %}
+
+
+    <div class="flex items-center space-x-4" x-cloak x-data="{ dropdownOpen: false }">
+
+        {% include 'partials/header/sign_in_dropdown.html.twig' %}
+
+        {% include 'partials/header/theme_switcher.html.twig' %}
+
+    </div>
+
+</header>
