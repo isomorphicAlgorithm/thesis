@@ -1,0 +1,45 @@
+<div
+    x-data="{
+        show: false,
+        content: '',
+        title: '',
+        open(detail) {
+            this.content = detail.content;
+            this.title = detail.title;
+            this.show = true;
+            document.body.classList.add('overflow-hidden');
+        },
+        close() {
+            this.show = false;
+            document.body.classList.remove('overflow-hidden');
+        }
+    }"
+    x-init="
+        window.addEventListener('open-modal', event => open(event.detail));
+        window.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
+    "
+    x-show="show"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 scale-90"
+    x-transition:enter-end="opacity-100 scale-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 scale-100"
+    x-transition:leave-end="opacity-0 scale-90"
+    @click.self="close()"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center"
+    style="display: none;"
+    aria-modal="true"
+    role="dialog"
+>
+    <div class="bg-zinc-900 text-yellow-50 p-6 rounded-xl max-w-xl w-full shadow-lg relative">
+        <h2 class="text-lg font-bold text-yellow-300 mb-2" x-text="title"></h2>
+        <p class="text-sm whitespace-pre-wrap max-h-[70vh] overflow-y-auto" x-text="content"></p>
+        <button
+            @click="close()"
+            class="px-3 py-1 rounded-xl cursor-pointer absolute top-2 right-2 text-yellow-300 hover:text-yellow-100 text-lg font-bold"
+            aria-label="Close modal"
+        >
+            &times;
+        </button>
+    </div>
+</div>

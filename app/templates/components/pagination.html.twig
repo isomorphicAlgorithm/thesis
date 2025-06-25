@@ -1,0 +1,69 @@
+{% set pageCount = pagination.pageCount > 0 ? pagination.pageCount : 1 %}
+<div class="mt-10 flex justify-center">
+    <nav class="inline-flex rounded-md shadow-sm isolate" aria-label="Pagination">
+        <!-- Prev Button -->
+        {% if pagination.currentPageNumber > 1 %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.currentPageNumber - 1})) }}"
+            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 rounded-l-md border border-zinc-700">
+                « Prev
+            </a>
+        {% else %}
+            <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-zinc-500 bg-zinc-900 border border-zinc-700 rounded-l-md cursor-not-allowed">
+                « Prev
+            </span>
+        {% endif %}
+
+        {% set window = 2 %}
+        {% set start = max(1, pagination.currentPageNumber - window) %}
+        {% set end = min(pageCount, pagination.currentPageNumber + window) %}
+
+        {% if start > 1 %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: 1})) }}"
+            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-l-md">
+                1
+            </a>
+            {% if start > 2 %}
+                <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 border border-zinc-700">
+                    …
+                </span>
+            {% endif %}
+        {% endif %}
+
+        {% for i in start..end %}
+            {% if i == pagination.currentPageNumber %}
+                <span class="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-black bg-yellow-500 border border-yellow-400">
+                    {{ i }}
+                </span>
+            {% else %}
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: i})) }}"
+                class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700">
+                    {{ i }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if end < pageCount %}
+            {% if end < pageCount - 1 %}
+                <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 border border-zinc-700">
+                    …
+                </span>
+            {% endif %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pageCount})) }}"
+            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-r-md">
+                {{ pageCount }}
+            </a>
+        {% endif %}
+
+        <!-- Next Button -->
+        {% if pagination.currentPageNumber < pagination.pageCount %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.currentPageNumber + 1})) }}"
+            class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-50 bg-zinc-800 hover:bg-zinc-700 rounded-r-md border border-zinc-700">
+                Next »
+            </a>
+        {% else %}
+            <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-zinc-500 bg-zinc-900 border border-zinc-700 rounded-r-md cursor-not-allowed">
+                Next »
+            </span>
+        {% endif %}
+    </nav>
+</div>
