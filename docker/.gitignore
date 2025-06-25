@@ -1,2 +1,41 @@
-.env
-.env.local
+# Symfony & PHP
+/vendor/
+/var/
+/node_modules/
+
+# Ignore Symfony cache and logs
+/var/cache/
+/var/log/
+/var/sessions/
+
+# Ignore Composer files that are rebuilt
+/composer.lock
+/symfony.lock
+
+# Environment files (sensitive info)
+/.env
+/.env.local
+/.env.*.local
+
+# Docker
+docker-compose.override.yaml
+
+# Node.js / Yarn / NPM
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Webpack Encore output
+public/build/
+
+# IDE / Editor folders
+/.idea/
+/.vscode/
+/*.swp
+.DS_Store
+
+# Misc
+*.bak
+*.tmp
+*.log
