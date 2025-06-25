@@ -40,3 +40,8 @@ docker-compose exec php php bin/console doctrine:migrations:migrate
 
 7. Access the app:
 The app should now be accessible at: http://localhost:9000
+
+8. Import Bands or Musicians using this command:
+```bash
+docker compose exec php bin/console bandito:import-artist 'Band/Musician Name'
+```
