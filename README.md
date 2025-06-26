@@ -19,23 +19,23 @@ cd thesis
 
 3. Start Docker containers:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 4. Install PHP dependencies:
 ```bash
-docker-compose exec php composer install
+docker compose exec php composer install
 ```
 
 5. Install node dependencies & build assets:
 ```bash
-docker-compose exec php npm install
-docker-compose exec php npm run dev
+docker compose exec php npm install
+docker compose exec php npm run dev
 ```
 
 6. Run database migrations:
 ```bash
-docker-compose exec php php bin/console doctrine:migrations:migrate
+docker compose exec php php bin/console doctrine:migrations:migrate
 ```
 
 7. Access the app:
