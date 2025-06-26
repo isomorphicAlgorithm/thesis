@@ -30,7 +30,7 @@ else
 fi
 
 # Run migrations automatically if enabled
-if [ "$RUN_MIGRATIONS" = "1" ]; then
+if [ "$RUN_MIGRATIONS" = "1" ] && [ -f bin/console ]; then
   echo "Running doctrine migrations..."
   php bin/console doctrine:migrations:migrate --no-interaction
 fi

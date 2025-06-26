@@ -21,6 +21,6 @@ ENV APP_DIR=/app
 WORKDIR $APP_DIR
 
 # Entrypoint
-COPY ./php/entrypoint.sh /entrypoint.sh
+COPY php/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
