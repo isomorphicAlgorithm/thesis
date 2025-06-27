@@ -15,7 +15,7 @@
 
 ```bash
 git clone git@github.com:isomorphicAlgorithm/thesis.git
-cd bandito/thesis
+cd thesis
 ```
 
 2. Set your environment variables:
@@ -28,7 +28,7 @@ HOST_GID=1000
 MYSQL_ROOT_PASSWORD=<choose-a-strong-password>
 ```
 
-SOS: .env.local should also have the correct credentials inside.
+Also .env.local should be created and have the correct credentials inside. (Check the .env.local.example)
 
 If your local user’s UID/GID aren’t 1000, adjust HOST_UID/HOST_GID accordingly.
 
